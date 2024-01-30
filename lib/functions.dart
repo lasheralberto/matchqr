@@ -664,6 +664,7 @@ Map<String, dynamic> aplanarJson(Map<String, dynamic> json,
     'session_data.amount_total',
     'session_data.created',
     'session_data.currency',
+    'session_data.metadata.pista_name'
     //'session_data.customer_details.address.city',
     //'session_data.customer_details.address.country',
     //'session_data.customer_details.address.line1',

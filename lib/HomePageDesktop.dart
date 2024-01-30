@@ -271,7 +271,7 @@ class _MyHomePageDesktopState extends State<MyHomePageDesktop>
                                     var itemDate =
                                         DateTime.fromMillisecondsSinceEpoch(
                                             item['session_data']['created'] *
-                                                StyleConstants.mobileSize);
+                                                1000);
 
                                     // Formatear ambas fechas a 'dd/mm/yyyy'
                                     var formattedItemDate =
