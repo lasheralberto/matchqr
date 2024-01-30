@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "934823142977",
+    "project_id": "misadonate",
+    "storage_bucket": "misadonate.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:934823142977:android:16f785c5c1231dc116c8c0",
+        "android_client_info": {
+          "package_name": "com.example.payment_tool"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "934823142977-vtfcjg5bf6ujv2t2k9t9flp1lstmg7lh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPeyAI3KdpdTFyCYEg8eoDyyMX_G1UpYA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "934823142977-vtfcjg5bf6ujv2t2k9t9flp1lstmg7lh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

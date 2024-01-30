@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>934823142977-emq57r1hvnncbs26u60a178j178fr4db.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.934823142977-emq57r1hvnncbs26u60a178j178fr4db</string>
+	<key>API_KEY</key>
+	<string>AIzaSyC5QQ1NsH0RpFeQMSr61CIzZpxqXkjGMtw</string>
+	<key>GCM_SENDER_ID</key>
+	<string>934823142977</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.paymentTool</string>
+	<key>PROJECT_ID</key>
+	<string>misadonate</string>
+	<key>STORAGE_BUCKET</key>
+	<string>misadonate.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:934823142977:ios:89f2ecaba0eca96b16c8c0</string>
+</dict>
+</plist>
