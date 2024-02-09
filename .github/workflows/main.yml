@@ -5,6 +5,7 @@ on:
     branches:
       - main  # Asume que 'main' es tu rama de desarrollo principal
 
+  
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -22,5 +23,5 @@ jobs:
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
-        github_token: ${{ secrets.SECRET_TOKEN }}
+        github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./build/web
