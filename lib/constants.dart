@@ -30,7 +30,8 @@ class ColorConstants {
 class AssetsImages {
   static String noDataQrBackground = '/images/ops.png';
   static String noDataQrAdmin = '/images/bored.png';
-  static String tennisLogoBall = 'images/tenis.png';
+  static String tennisLogoBall =
+      'images/landing_images/matchqrLogo.png'; //'images/tenis2.png';
   static String AppBarInkWizLogo = '/images/s2.png';
   static String GoogleSignInLogo = "/images/g_logo.png";
   static String BookGifLandingPage =
@@ -50,6 +51,7 @@ class StyleConstants {
   static BorderRadius border = BorderRadius.circular(10.0);
   static int mobileSize = 1372;
   static double elevation = 20.0;
+  static Size logoQrSize = Size(45, 45);
 }
 
 class PayConstants {

@@ -45,81 +45,92 @@ class _QRCardsState extends State<QRCards> {
         children: [
           Align(
             alignment: Alignment.topLeft,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 20.0, right: 20.0),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    shape: const CircleBorder(),
-                    padding: const EdgeInsets.all(24),
-                    backgroundColor: AppColors.IconColor,
-                    foregroundColor: AppColors.IconColor),
-                onPressed: () {
-                  //se actualiza el campo groupFilterSelected
-                  _showFilterPopup(widget.mail);
-                },
-                child: Icon(Icons.filter_alt_rounded,
-                    weight: 40.0, color: ColorConstants.colorButtons, size: 20),
-              ),
-            ),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Align(
-            alignment: Alignment.topLeft,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 20.0, right: 20.0),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    shape: const CircleBorder(),
-                    padding: const EdgeInsets.all(24),
-                    backgroundColor: AppColors.IconColor),
-                onPressed: () async {
-                  await deleteUsersWithEmail(
-                      context, widget.mail, groupFilterSelected.toString());
-                },
-                child: const Icon(Icons.delete,
-                    weight: 40.0, color: AppColors.IconColor2, size: 20),
-              ),
-            ),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Align(
-            alignment: Alignment.topLeft,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 20.0, right: 20.0),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    shape: const CircleBorder(),
-                    padding: const EdgeInsets.all(24),
-                    backgroundColor: AppColors.IconColor),
-                onPressed: () async {
-                  setState(
-                    () => isLoadingDownloadQR = true,
-                  );
-                  await downloadAllQR(
-                      widget.mail, groupFilterSelected.toString());
-
-                  setState(
-                    () => isLoadingDownloadQR = false,
-                  );
-                },
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Icon(
-                      Icons.download,
+            child: Tooltip(
+              message: 'Filtrar por grupo',
+              child: Padding(
+                padding: const EdgeInsets.only(top: 20.0, right: 20.0),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      shape: const CircleBorder(),
+                      padding: const EdgeInsets.all(24),
+                      backgroundColor: AppColors.IconColor,
+                      foregroundColor: AppColors.IconColor),
+                  onPressed: () {
+                    //se actualiza el campo groupFilterSelected
+                    _showFilterPopup(widget.mail);
+                  },
+                  child: Icon(Icons.filter_alt_rounded,
                       weight: 40.0,
                       color: ColorConstants.colorButtons,
-                      size: 20,
-                    ),
-                    if (isLoadingDownloadQR)
-                      const CircularProgressIndicator(
-                        color: Colors.white,
+                      size: 20),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Align(
+            alignment: Alignment.topLeft,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 20.0, right: 20.0),
+              child: Tooltip(
+                message: 'Eliminar todos los QR',
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      shape: const CircleBorder(),
+                      padding: const EdgeInsets.all(24),
+                      backgroundColor: AppColors.IconColor),
+                  onPressed: () async {
+                    await deleteUsersWithEmail(
+                        context, widget.mail, groupFilterSelected.toString());
+                  },
+                  child: const Icon(Icons.delete,
+                      weight: 40.0, color: Colors.white, size: 20),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Align(
+            alignment: Alignment.topLeft,
+            child: Tooltip(
+              message: 'Descargar todos los QR',
+              child: Padding(
+                padding: const EdgeInsets.only(top: 20.0, right: 20.0),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      shape: const CircleBorder(),
+                      padding: const EdgeInsets.all(24),
+                      backgroundColor: AppColors.IconColor),
+                  onPressed: () async {
+                    setState(
+                      () => isLoadingDownloadQR = true,
+                    );
+                    await downloadAllQR(
+                        widget.mail, groupFilterSelected.toString());
+
+                    setState(
+                      () => isLoadingDownloadQR = false,
+                    );
+                  },
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Icon(
+                        Icons.download,
+                        weight: 40.0,
+                        color: ColorConstants.colorButtons,
+                        size: 20,
                       ),
-                  ],
+                      if (isLoadingDownloadQR)
+                        const CircularProgressIndicator(
+                          color: Colors.white,
+                        ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -133,7 +144,7 @@ class _QRCardsState extends State<QRCards> {
             borderRadius: StyleConstants.border,
           ),
           elevation: 20.0,
-          color: ColorConstants.colortheme,
+          color: AppColors.IconColor,
           child: Padding(
             padding: const EdgeInsets.all(20.0),
             child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
@@ -170,9 +181,7 @@ class _QRCardsState extends State<QRCards> {
                           var payLinkUrl = doc['pay_link'];
                           var prodName = doc['prod_name'];
                           var prodDesc = doc['prod_desc'];
-                          var type = doc['type'];
                           var eyeShape = selectedShapeQR[doc['qrStyle']['eye']];
-                          var typeOfInsert = typesOfInsertMap[type];
                           var color = doc['qrStyle']['color'];
                           var colorConv = Color.fromRGBO(
                               color['red'], color['green'], color['blue'], 1.0);
@@ -228,8 +237,9 @@ class _QRCardsState extends State<QRCards> {
                                         size: 200.0,
                                         data: payLinkUrl,
                                         embeddedImageStyle:
-                                            const QrEmbeddedImageStyle(
-                                                size: Size(30, 30)),
+                                            QrEmbeddedImageStyle(
+                                                size:
+                                                    StyleConstants.logoQrSize),
                                         embeddedImage: AssetImage(
                                             AssetsImages.tennisLogoBall),
                                         dataModuleStyle: QrDataModuleStyle(
@@ -510,8 +520,8 @@ class _QRCardsState extends State<QRCards> {
                               QrImageView(
                                 size: 200.0,
                                 data: data,
-                                embeddedImageStyle: const QrEmbeddedImageStyle(
-                                    size: Size(30, 30)),
+                                embeddedImageStyle: QrEmbeddedImageStyle(
+                                    size: StyleConstants.logoQrSize),
                                 embeddedImage:
                                     AssetImage(AssetsImages.tennisLogoBall),
                                 dataModuleStyle: QrDataModuleStyle(
@@ -568,9 +578,9 @@ class _QRCardsState extends State<QRCards> {
               child: Align(
                 alignment: Alignment.bottomRight,
                 child: IconButton(
+                  tooltip: 'Borrar QR',
                   style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all(AppColors.IconColor2)),
+                      backgroundColor: MaterialStateProperty.all(Colors.white)),
                   icon: const Icon(Icons.delete),
                   onPressed: () async {
                     // Lógica para borrar el documento de Firestore

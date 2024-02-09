@@ -113,8 +113,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                         child: Text(
                           LoginConstants.logInBox,
                           style: const TextStyle(
-                              color: AppColors.IconColor,
-                              fontWeight: FontWeight.bold),
+                              color: Colors.white, fontWeight: FontWeight.w400),
                         ), // Usa LoginConstants.logInBox si está disponible
                       ),
                     ),
@@ -272,34 +271,50 @@ class _LoginWidgetState extends State<LoginWidget> {
     });
   }
 
-  _loginUser(email, pass) async {
+  Future<void> _loginUser(String email, String pass) async {
     try {
-      final firebaseGo = (await authFirebase.signInWithEmailAndPassword(
+      // Intento de inicio de sesión con Firebase Auth
+      final UserCredential firebaseGo =
+          await authFirebase.signInWithEmailAndPassword(
         email: email,
         password: pass,
-      ));
-      var user = firebaseGo.user;
+      );
 
-      FirebaseFirestore.instance.collection('users').doc().set({
-        'name': user!.displayName,
-        'uid': user.uid,
-        'email': user.email,
-        'isEmailVerified': user.emailVerified, // will also be false
-        'photoUrl': user.photoURL, // will always be null
-      });
+      User? user = firebaseGo.user;
 
-      setState(() {
-        _success = true;
-        Navigator.pushNamed(context, AppRoutes.home, arguments: email);
+      // Verificar si user no es null y si el correo electrónico ha sido verificado
+      if (user != null) {
+        if (user.emailVerified) {
+          // Si el correo está verificado, proceder con la lógica de la aplicación
+          FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+            'name': user.displayName ?? 'Usuario sin nombre',
+            'uid': user.uid,
+            'email': user.email,
+            'isEmailVerified': user.emailVerified,
+            'photoUrl': user.photoURL ?? 'URL de foto por defecto',
+          });
 
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //       builder: (context) => MyHomePageDesktop(email: email)),
-        // );
-      });
+          setState(() {
+            _success = true;
+            Navigator.pushNamed(context, AppRoutes.home, arguments: email);
+          });
+        } else {
+          // Si el correo no está verificado, notificar al usuario y potencialmente cerrar la sesión
+          await authFirebase
+              .signOut(); // Cerrar la sesión si el correo no está verificado
+          _showCupertinoDialog(
+              context,
+              "Por favor, verifica tu correo electrónico para continuar.",
+              "Correo no verificado");
+
+          setState(() {
+            _success = false;
+          });
+        }
+      }
     } on FirebaseAuthException catch (e) {
-      _showCupertinoDialog(context, e.message, e.code);
+      _showCupertinoDialog(
+          context, e.message ?? "Ocurrió un error desconocido.", e.code);
 
       setState(() {
         _success = false;

@@ -224,7 +224,7 @@ class _QRAdminPanelState extends State<QRAdminPanel> {
                                 child: Padding(
                                   padding: const EdgeInsets.all(16),
                                   child: Card(
-                                    elevation: 10,
+                                    elevation: StyleConstants.elevation,
                                     child: ListTile(
                                       shape: RoundedRectangleBorder(
                                           borderRadius: StyleConstants
@@ -407,7 +407,7 @@ void showInfoMatchesPopUp(
               const SizedBox(height: 15),
               Expanded(
                 child: Card(
-                    elevation: 10,
+                    elevation: StyleConstants.elevation,
                     shape: RoundedRectangleBorder(
                       borderRadius:
                           StyleConstants.border, // Esquinas redondeadas
@@ -418,11 +418,10 @@ void showInfoMatchesPopUp(
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return SizedBox(
+                          return const SizedBox(
                             height: 20,
                             width: 20,
-                            child: const Center(
-                                child: CircularProgressIndicator()),
+                            child: Center(child: CircularProgressIndicator()),
                           );
                         } else if (snapshot.hasError) {
                           return Text('Error: ${snapshot.error}');
@@ -525,7 +524,7 @@ void showInfoMatchesPopUp(
                                             color: containsRefund == true
                                                 ? Colors.red
                                                 : AppColors.tileColor,
-                                            elevation: 5,
+                                            elevation: StyleConstants.elevation,
                                             shape: RoundedRectangleBorder(
                                                 borderRadius:
                                                     StyleConstants.border
@@ -539,7 +538,8 @@ void showInfoMatchesPopUp(
                                               tileColor: AppColors.tileColor,
                                               title: Row(
                                                 mainAxisAlignment:
-                                                    MainAxisAlignment.start,
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
                                                 children: [
                                                   Text(
                                                     transaction['session_data']
@@ -548,48 +548,55 @@ void showInfoMatchesPopUp(
                                                     overflow: TextOverflow.fade,
                                                   ),
                                                   const Spacer(),
-                                                  IconButton.outlined(
-                                                      tooltip: 'Devolver pago',
-                                                      onPressed: () async {
-                                                        int returnCode =
-                                                            await refundPayment(
-                                                                transaction[
-                                                                        'session_data']
-                                                                    [
-                                                                    'payment_intent']);
+                                                  screenSize.width > 1000
+                                                      ? IconButton.outlined(
+                                                          tooltip:
+                                                              'Devolver pago',
+                                                          onPressed: () async {
+                                                            int returnCode =
+                                                                await refundPayment(
+                                                                    transaction[
+                                                                            'session_data']
+                                                                        [
+                                                                        'payment_intent']);
 
-                                                        if (returnCode == 200) {
-                                                          // Obtener el mapa 'session_data' de la transacción
-                                                          Map<String, dynamic>
-                                                              sessionData =
-                                                              transaction[
-                                                                  'session_data'];
+                                                            if (returnCode ==
+                                                                200) {
+                                                              // Obtener el mapa 'session_data' de la transacción
+                                                              Map<String,
+                                                                      dynamic>
+                                                                  sessionData =
+                                                                  transaction[
+                                                                      'session_data'];
 
-// Añadir el nuevo campo 'isRefunded' con el valor true
-                                                          sessionData[
-                                                                  'isRefunded'] =
-                                                              true;
+                                                              // Añadir el nuevo campo 'isRefunded' con el valor true
+                                                              sessionData[
+                                                                      'isRefunded'] =
+                                                                  true;
 
-                                                          await updatePaymentIntent(
-                                                              email,
-                                                              transaction[
-                                                                      'session_data']
-                                                                  [
-                                                                  'payment_intent'],
-                                                              sessionData);
+                                                              await updatePaymentIntent(
+                                                                  email,
+                                                                  transaction[
+                                                                          'session_data']
+                                                                      [
+                                                                      'payment_intent'],
+                                                                  sessionData);
 
-                                                          showRefundMsg(context,
-                                                              'Pago devuelto');
-                                                        } else {
-                                                          showRefundMsg(context,
-                                                              'Error al devolver el pago');
-                                                        }
-                                                      },
-                                                      icon: const Icon(Icons
-                                                          .replay_circle_filled_rounded))
+                                                              showRefundMsg(
+                                                                  context,
+                                                                  'Pago devuelto');
+                                                            } else {
+                                                              showRefundMsg(
+                                                                  context,
+                                                                  'Error al devolver el pago');
+                                                            }
+                                                          },
+                                                          icon: const Icon(Icons
+                                                              .replay_circle_filled_rounded))
+                                                      : const SizedBox.shrink()
                                                 ],
                                               ),
-                                              subtitle: Row(
+                                              subtitle: Wrap(
                                                 children: [
                                                   Text(
                                                     (transaction['session_data']
@@ -729,6 +736,7 @@ class _PaymentHistoryDialogState extends State<PaymentHistoryDialog> {
           const SizedBox(height: 15),
           Expanded(
             child: Card(
+              elevation: StyleConstants.elevation,
               child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
                 stream: getDataFirestoreMatch(
                     widget.email, "acc_id"), // Reemplaza con tu función Future
@@ -1175,66 +1183,86 @@ class LineChartWidget extends StatelessWidget {
             child: StreamBuilder(
               stream: dataStream,
               builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if (snapshot.hasData) {
-                  final tusDatos = snapshot.data.docs;
-                  List<FlSpot> dataPoints =
-                      getLineChartData(snapshot.data.docs, 10)
-                          .map((data) => data['punto'] as FlSpot)
-                          .toList();
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
 
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: AspectRatio(
-                      aspectRatio: 1.70,
-                      child: LineChart(
-                        LineChartData(
-                          titlesData: const FlTitlesData(
-                            leftTitles: AxisTitles(
-                              sideTitles: SideTitles(showTitles: false),
+                if (snapshot.hasError) {
+                  return Center(
+                      child: Center(
+                          child: Text(
+                              'Error: ${snapshot.error}'))); // Mostrar mensaje de error
+                }
+
+                if (snapshot.connectionState == ConnectionState.done ||
+                    snapshot.connectionState == ConnectionState.active) {
+                  if (snapshot.data.docs.isNotEmpty) {
+                    final tusDatos = snapshot.data.docs;
+                    List<FlSpot> dataPoints =
+                        getLineChartData(snapshot.data.docs, 10)
+                            .map((data) => data['punto'] as FlSpot)
+                            .toList();
+
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: AspectRatio(
+                        aspectRatio: 1.70,
+                        child: LineChart(
+                          LineChartData(
+                            titlesData: const FlTitlesData(
+                              leftTitles: AxisTitles(
+                                sideTitles: SideTitles(showTitles: false),
+                              ),
+                              rightTitles: AxisTitles(
+                                sideTitles: SideTitles(showTitles: false),
+                              ),
+                              topTitles: AxisTitles(
+                                sideTitles: SideTitles(showTitles: false),
+                              ),
                             ),
-                            rightTitles: AxisTitles(
-                              sideTitles: SideTitles(showTitles: false),
+                            backgroundColor: AppColors.tileColor,
+                            gridData: const FlGridData(show: false),
+                            borderData: FlBorderData(
+                              show: false,
+                              border: Border(
+                                bottom: BorderSide(
+                                  color: AppColors.tileColor.withOpacity(0.2),
+                                  width: 4,
+                                ),
+                                left: const BorderSide(
+                                  color: Colors.transparent,
+                                ),
+                                right: const BorderSide(
+                                  color: Colors.transparent,
+                                ),
+                                top: const BorderSide(
+                                  color: Colors.transparent,
+                                ),
+                              ),
                             ),
-                            topTitles: AxisTitles(
-                              sideTitles: SideTitles(showTitles: false),
-                            ),
+                            lineBarsData: [
+                              LineChartBarData(
+                                color: AppColors.IconColor,
+                                spots: dataPoints,
+                                // otras configuraciones para LineChartBarData...
+                              ),
+                            ],
+                            // otras configuraciones para LineChartData...
                           ),
-                          backgroundColor: AppColors.tileColor,
-                          gridData: const FlGridData(show: false),
-                          borderData: FlBorderData(
-                            show: false,
-                            border: Border(
-                              bottom: BorderSide(
-                                color: AppColors.tileColor.withOpacity(0.2),
-                                width: 4,
-                              ),
-                              left: const BorderSide(
-                                color: Colors.transparent,
-                              ),
-                              right: const BorderSide(
-                                color: Colors.transparent,
-                              ),
-                              top: const BorderSide(
-                                color: Colors.transparent,
-                              ),
-                            ),
-                          ),
-                          lineBarsData: [
-                            LineChartBarData(
-                              color: AppColors.IconColor,
-                              spots: dataPoints,
-                              // otras configuraciones para LineChartBarData...
-                            ),
-                          ],
-                          // otras configuraciones para LineChartData...
                         ),
                       ),
-                    ),
-                  );
-                } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
+                    );
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else {
+                    return const CircularProgressIndicator();
+                  }
                 } else {
-                  return const CircularProgressIndicator();
+                  return const Center(
+                    child: Text('Error'),
+                  );
                 }
               },
             ),
@@ -1306,7 +1334,7 @@ class _LineChartTotalFactState extends State<LineChartTotalFact> {
           shape: RoundedRectangleBorder(
             borderRadius: StyleConstants.border, // Esquinas redondeadas
           ),
-          elevation: 10,
+          elevation: StyleConstants.elevation,
           child: AspectRatio(
             aspectRatio: 2.5,
             child: Padding(
@@ -1318,7 +1346,7 @@ class _LineChartTotalFactState extends State<LineChartTotalFact> {
                 return StreamBuilder(
                   stream: widget.datastream,
                   builder: (context, AsyncSnapshot snapshot) {
-                    if (snapshot.hasData) {
+                    if (snapshot.data.docs.isNotEmpty) {
                       // Aquí se convierten los datos del snapshot en allSpots
 
                       List<FlSpot> allSpots = getLineChartData(
@@ -1547,7 +1575,12 @@ class _LineChartTotalFactState extends State<LineChartTotalFact> {
                         ),
                       );
                     } else {
-                      return const CircularProgressIndicator();
+                      return const Center(
+                        child: Text(
+                          'Aún no hay datos.',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      );
                     }
                   },
                 );
@@ -1795,7 +1828,7 @@ class _LineChartCountState extends State<LineChartCount> {
           shape: RoundedRectangleBorder(
             borderRadius: StyleConstants.border, // Esquinas redondeadas
           ),
-          elevation: 10,
+          elevation: StyleConstants.elevation,
           child: AspectRatio(
             aspectRatio: 2.5,
             child: Padding(
@@ -1807,232 +1840,260 @@ class _LineChartCountState extends State<LineChartCount> {
                 return StreamBuilder(
                   stream: widget.datastream,
                   builder: (context, AsyncSnapshot snapshot) {
-                    if (snapshot.hasData) {
-                      // Aquí se convierten los datos del snapshot en allSpots
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
 
-                      List<FlSpot> allSpots = getLineChartDataCount(
-                              snapshot.data.docs, widget.lastNRegistros)
-                          .map((data) => data['punto'] as FlSpot)
-                          .toList();
+                    if (snapshot.hasError) {
+                      return Center(
+                          child: Center(
+                              child: Text(
+                                  'Error: ${snapshot.error}'))); // Mostrar mensaje de error
+                    }
 
-                      List<dynamic> allDates = getLineChartDataCount(
-                              snapshot.data.docs, widget.lastNRegistros)
-                          .map((data) => data['fecha'])
-                          .toList();
+                    if (snapshot.connectionState == ConnectionState.done ||
+                        snapshot.connectionState == ConnectionState.active) {
+                      if (snapshot.data!.docs.isNotEmpty) {
+                        // Aquí se convierten los datos del snapshot en allSpots
 
-                      var spotsLen = allSpots.length;
-                      List<int> showingTooltipOnSpots = [];
-                      int lenSpot = 0;
-                      while (lenSpot < spotsLen) {
-                        var spot = allSpots[lenSpot];
-                        if (spot.y > 0) {
-                          showingTooltipOnSpots.add(lenSpot);
+                        List<FlSpot> allSpots = getLineChartDataCount(
+                                snapshot.data.docs, widget.lastNRegistros)
+                            .map((data) => data['punto'] as FlSpot)
+                            .toList();
+
+                        List<dynamic> allDates = getLineChartDataCount(
+                                snapshot.data.docs, widget.lastNRegistros)
+                            .map((data) => data['fecha'])
+                            .toList();
+
+                        var spotsLen = allSpots.length;
+                        List<int> showingTooltipOnSpots = [];
+                        int lenSpot = 0;
+                        while (lenSpot < spotsLen) {
+                          var spot = allSpots[lenSpot];
+                          if (spot.y > 0) {
+                            showingTooltipOnSpots.add(lenSpot);
+                          }
+                          lenSpot +=
+                              1; // Incrementa lenSpot después de usarlo para acceder a la lista
                         }
-                        lenSpot +=
-                            1; // Incrementa lenSpot después de usarlo para acceder a la lista
-                      }
 
-                      final lineBarsData = [
-                        LineChartBarData(
-                          showingIndicators: showingTooltipOnSpots,
-                          spots: allSpots,
-                          isCurved: true,
-                          barWidth: 4,
-                          shadow: const Shadow(
-                            blurRadius: 8,
-                          ),
-                          belowBarData: BarAreaData(
-                            show: true,
+                        final lineBarsData = [
+                          LineChartBarData(
+                            showingIndicators: showingTooltipOnSpots,
+                            spots: allSpots,
+                            isCurved: true,
+                            barWidth: 4,
+                            shadow: const Shadow(
+                              blurRadius: 8,
+                            ),
+                            belowBarData: BarAreaData(
+                              show: true,
+                              gradient: LinearGradient(
+                                colors: [
+                                  widget.gradientColor1.withOpacity(0.4),
+                                  widget.gradientColor2.withOpacity(0.4),
+                                  widget.gradientColor3.withOpacity(0.4),
+                                ],
+                              ),
+                            ),
+                            dotData: const FlDotData(show: false),
                             gradient: LinearGradient(
                               colors: [
-                                widget.gradientColor1.withOpacity(0.4),
-                                widget.gradientColor2.withOpacity(0.4),
-                                widget.gradientColor3.withOpacity(0.4),
+                                widget.gradientColor1,
+                                widget.gradientColor2,
+                                widget.gradientColor3,
                               ],
+                              stops: const [0.1, 0.4, 0.9],
                             ),
                           ),
-                          dotData: const FlDotData(show: false),
-                          gradient: LinearGradient(
-                            colors: [
-                              widget.gradientColor1,
-                              widget.gradientColor2,
-                              widget.gradientColor3,
-                            ],
-                            stops: const [0.1, 0.4, 0.9],
-                          ),
-                        ),
-                      ];
+                        ];
 
-                      final tooltipsOnBar = lineBarsData[0];
+                        final tooltipsOnBar = lineBarsData[0];
 
-                      return LineChart(
-                        LineChartData(
-                          showingTooltipIndicators:
-                              showingTooltipOnSpots.map((index) {
-                            return ShowingTooltipIndicators([
-                              LineBarSpot(
-                                tooltipsOnBar,
-                                lineBarsData.indexOf(tooltipsOnBar),
-                                tooltipsOnBar.spots[index],
-                              ),
-                            ]);
-                          }).toList(),
-                          lineTouchData: LineTouchData(
-                            enabled: true,
-                            handleBuiltInTouches: false,
-                            touchCallback: (FlTouchEvent event,
-                                LineTouchResponse? response) {
-                              if (response == null ||
-                                  response.lineBarSpots == null) {
-                                return;
-                              }
-                              if (event is FlTapUpEvent) {
-                                final spotIndex =
-                                    response.lineBarSpots!.first.spotIndex;
-                                setState(() {
-                                  if (showingTooltipOnSpots
-                                      .contains(spotIndex)) {
-                                    showingTooltipOnSpots.remove(spotIndex);
-                                  } else {
-                                    showingTooltipOnSpots.add(spotIndex);
-                                  }
-                                });
-                              }
-                            },
-                            mouseCursorResolver: (FlTouchEvent event,
-                                LineTouchResponse? response) {
-                              if (response == null ||
-                                  response.lineBarSpots == null) {
-                                return SystemMouseCursors.basic;
-                              }
-                              return SystemMouseCursors.click;
-                            },
-                            getTouchedSpotIndicator: (LineChartBarData barData,
-                                List<int> spotIndexes) {
-                              return spotIndexes.map((index) {
-                                return TouchedSpotIndicatorData(
-                                  const FlLine(
-                                    color: Colors.pink,
-                                  ),
-                                  FlDotData(
-                                    show: true,
-                                    getDotPainter:
-                                        (spot, percent, barData, index) =>
-                                            FlDotCirclePainter(
-                                      radius: 8,
-                                      color: lerpGradient(
-                                        barData.gradient!.colors,
-                                        barData.gradient!.stops!,
-                                        percent / 100,
-                                      ),
-                                      strokeWidth: 2,
-                                      strokeColor: widget.indicatorStrokeColor,
+                        return LineChart(
+                          LineChartData(
+                            showingTooltipIndicators:
+                                showingTooltipOnSpots.map((index) {
+                              return ShowingTooltipIndicators([
+                                LineBarSpot(
+                                  tooltipsOnBar,
+                                  lineBarsData.indexOf(tooltipsOnBar),
+                                  tooltipsOnBar.spots[index],
+                                ),
+                              ]);
+                            }).toList(),
+                            lineTouchData: LineTouchData(
+                              enabled: true,
+                              handleBuiltInTouches: false,
+                              touchCallback: (FlTouchEvent event,
+                                  LineTouchResponse? response) {
+                                if (response == null ||
+                                    response.lineBarSpots == null) {
+                                  return;
+                                }
+                                if (event is FlTapUpEvent) {
+                                  final spotIndex =
+                                      response.lineBarSpots!.first.spotIndex;
+                                  setState(() {
+                                    if (showingTooltipOnSpots
+                                        .contains(spotIndex)) {
+                                      showingTooltipOnSpots.remove(spotIndex);
+                                    } else {
+                                      showingTooltipOnSpots.add(spotIndex);
+                                    }
+                                  });
+                                }
+                              },
+                              mouseCursorResolver: (FlTouchEvent event,
+                                  LineTouchResponse? response) {
+                                if (response == null ||
+                                    response.lineBarSpots == null) {
+                                  return SystemMouseCursors.basic;
+                                }
+                                return SystemMouseCursors.click;
+                              },
+                              getTouchedSpotIndicator:
+                                  (LineChartBarData barData,
+                                      List<int> spotIndexes) {
+                                return spotIndexes.map((index) {
+                                  return TouchedSpotIndicatorData(
+                                    const FlLine(
+                                      color: Colors.pink,
                                     ),
-                                  ),
-                                );
-                              }).toList();
-                            },
-                            touchTooltipData: LineTouchTooltipData(
-                              tooltipBgColor: Colors.pink,
-                              tooltipRoundedRadius: 6,
-                              getTooltipItems:
-                                  (List<LineBarSpot> lineBarsSpot) {
-                                return lineBarsSpot.map((lineBarSpot) {
-                                  return LineTooltipItem(
-                                    lineBarSpot.y.toString(),
-                                    const TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
+                                    FlDotData(
+                                      show: true,
+                                      getDotPainter:
+                                          (spot, percent, barData, index) =>
+                                              FlDotCirclePainter(
+                                        radius: 8,
+                                        color: lerpGradient(
+                                          barData.gradient!.colors,
+                                          barData.gradient!.stops!,
+                                          percent / 100,
+                                        ),
+                                        strokeWidth: 2,
+                                        strokeColor:
+                                            widget.indicatorStrokeColor,
+                                      ),
                                     ),
                                   );
                                 }).toList();
                               },
-                            ),
-                          ),
-                          lineBarsData: lineBarsData,
-                          minY: 0,
-                          titlesData: FlTitlesData(
-                            leftTitles: AxisTitles(
-                              axisNameWidget:
-                                  Container(), // Vacío para no mostrar nada
-                              axisNameSize:
-                                  0, // Tamaño cero para el nombre del eje
-                              sideTitles: const SideTitles(
-                                showTitles:
-                                    false, // No mostrar títulos en los ejes superiores
-                                reservedSize:
-                                    0, // Tamaño reservado cero para los títulos de los ejes
-                              ),
-                            ),
-                            bottomTitles: AxisTitles(
-                              axisNameWidget:
-                                  Container(), // Vacío para no mostrar nada
-                              axisNameSize:
-                                  0, // Tamaño cero para el nombre del eje
-                              sideTitles: SideTitles(
-                                showTitles:
-                                    true, // Habilitar la visualización de títulos en el eje inferior
-                                getTitlesWidget:
-                                    (double value, TitleMeta meta) {
-                                  int index = value.toInt();
-                                  if (index >= 0 && index < allDates.length) {
-                                    var fecha = allDates[index];
-                                    String formattedDate = DateFormat('d/M')
-                                        .format(fecha); // Formato de fecha
-                                    return Transform.rotate(
-                                      angle: -45 *
-                                          3.1415927 /
-                                          180, // Rotar -45 grados (en radianes)
-                                      child: Text(
-                                        formattedDate,
-                                        style: const TextStyle(
-                                            color: Colors.black, fontSize: 10),
+                              touchTooltipData: LineTouchTooltipData(
+                                tooltipBgColor: Colors.pink,
+                                tooltipRoundedRadius: 6,
+                                getTooltipItems:
+                                    (List<LineBarSpot> lineBarsSpot) {
+                                  return lineBarsSpot.map((lineBarSpot) {
+                                    return LineTooltipItem(
+                                      lineBarSpot.y.toString(),
+                                      const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     );
-                                  } else {
-                                    return Container();
-                                  }
+                                  }).toList();
                                 },
-                                reservedSize:
-                                    45, // Aumentar el espacio reservado para los títulos
                               ),
                             ),
-                            topTitles: AxisTitles(
-                              axisNameWidget:
-                                  Container(), // Vacío para no mostrar nada
-                              axisNameSize:
-                                  0, // Tamaño cero para el nombre del eje
-                              sideTitles: const SideTitles(
-                                showTitles:
-                                    false, // No mostrar títulos en los ejes superiores
-                                reservedSize:
-                                    0, // Tamaño reservado cero para los títulos de los ejes
+                            lineBarsData: lineBarsData,
+                            minY: 0,
+                            titlesData: FlTitlesData(
+                              leftTitles: AxisTitles(
+                                axisNameWidget:
+                                    Container(), // Vacío para no mostrar nada
+                                axisNameSize:
+                                    0, // Tamaño cero para el nombre del eje
+                                sideTitles: const SideTitles(
+                                  showTitles:
+                                      false, // No mostrar títulos en los ejes superiores
+                                  reservedSize:
+                                      0, // Tamaño reservado cero para los títulos de los ejes
+                                ),
+                              ),
+                              bottomTitles: AxisTitles(
+                                axisNameWidget:
+                                    Container(), // Vacío para no mostrar nada
+                                axisNameSize:
+                                    0, // Tamaño cero para el nombre del eje
+                                sideTitles: SideTitles(
+                                  showTitles:
+                                      true, // Habilitar la visualización de títulos en el eje inferior
+                                  getTitlesWidget:
+                                      (double value, TitleMeta meta) {
+                                    int index = value.toInt();
+                                    if (index >= 0 && index < allDates.length) {
+                                      var fecha = allDates[index];
+                                      String formattedDate = DateFormat('d/M')
+                                          .format(fecha); // Formato de fecha
+                                      return Transform.rotate(
+                                        angle: -45 *
+                                            3.1415927 /
+                                            180, // Rotar -45 grados (en radianes)
+                                        child: Text(
+                                          formattedDate,
+                                          style: const TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 10),
+                                        ),
+                                      );
+                                    } else {
+                                      return Container();
+                                    }
+                                  },
+                                  reservedSize:
+                                      45, // Aumentar el espacio reservado para los títulos
+                                ),
+                              ),
+                              topTitles: AxisTitles(
+                                axisNameWidget:
+                                    Container(), // Vacío para no mostrar nada
+                                axisNameSize:
+                                    0, // Tamaño cero para el nombre del eje
+                                sideTitles: const SideTitles(
+                                  showTitles:
+                                      false, // No mostrar títulos en los ejes superiores
+                                  reservedSize:
+                                      0, // Tamaño reservado cero para los títulos de los ejes
+                                ),
+                              ),
+                              rightTitles: AxisTitles(
+                                axisNameWidget:
+                                    Container(), // Vacío para no mostrar nada
+                                axisNameSize:
+                                    0, // Tamaño cero para el nombre del eje
+                                sideTitles: const SideTitles(
+                                  showTitles:
+                                      false, // No mostrar títulos en los ejes superiores
+                                  reservedSize:
+                                      0, // Tamaño reservado cero para los títulos de los ejes
+                                ),
                               ),
                             ),
-                            rightTitles: AxisTitles(
-                              axisNameWidget:
-                                  Container(), // Vacío para no mostrar nada
-                              axisNameSize:
-                                  0, // Tamaño cero para el nombre del eje
-                              sideTitles: const SideTitles(
-                                showTitles:
-                                    false, // No mostrar títulos en los ejes superiores
-                                reservedSize:
-                                    0, // Tamaño reservado cero para los títulos de los ejes
+                            gridData: const FlGridData(show: false),
+                            borderData: FlBorderData(
+                              show: true,
+                              border: Border.all(
+                                color: Colors.white10,
                               ),
                             ),
                           ),
-                          gridData: const FlGridData(show: false),
-                          borderData: FlBorderData(
-                            show: true,
-                            border: Border.all(
-                              color: Colors.white10,
-                            ),
+                        );
+                      } else {
+                        return const Center(
+                          child: Text(
+                            'Aún no hay datos.',
+                            style: TextStyle(color: Colors.white),
                           ),
-                        ),
-                      );
+                        );
+                      }
                     } else {
-                      return const CircularProgressIndicator();
+                      return const Center(
+                        child: Text('Error'),
+                      );
                     }
                   },
                 );

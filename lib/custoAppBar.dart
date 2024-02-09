@@ -1,9 +1,9 @@
- 
 import 'package:payment_tool/constants.dart';
 import 'package:payment_tool/cuadraditosLanding.dart';
 import 'package:payment_tool/main.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   var title;
@@ -41,12 +41,20 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     Future<dynamic> userPhoto = getUserPhoto();
 
     return AppBar(
-      
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
               bottomLeft: Radius.circular(25.0),
               bottomRight: Radius.circular(25.0))),
       actions: <Widget>[
+        IconButton(
+            onPressed: () async {
+              await launchUrl(
+                  Uri.parse('https://www.matchqr.es/userguide.html'));
+            },
+            icon: const Icon(
+              Icons.help_outlined,
+              color: AppColors.IconColor,
+            )),
         GestureDetector(
           onTap: () {
             showMenu(

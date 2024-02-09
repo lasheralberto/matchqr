@@ -50,7 +50,7 @@ class _MyHomePageDesktopState extends State<MyHomePageDesktop>
 
   DateTime? selectedDate;
   int tabSelected = 2;
-  final bool _estaDescargando = false;
+  bool _estaDescargando = false;
   String? urlImage;
   bool isLoaded = false;
   String? groupSelected;
@@ -76,10 +76,26 @@ class _MyHomePageDesktopState extends State<MyHomePageDesktop>
         appBar: CustomAppBar(title: '', hasTitle: false),
         body: SlidingUpPanel(
           backdropColor: AppColors.IconColor,
-          collapsed: const Center(
-              child: Icon(
-            Icons.add,
-            weight: 50.0,
+          collapsed: Center(
+              child: Container(
+            decoration: BoxDecoration(
+              color: AppColors
+                  .IconColor, // Un color que contraste con AppColors.IconColor
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 5,
+                  blurRadius: 7,
+                  offset: Offset(0, 3), // Cambios de posición de la sombra
+                ),
+              ],
+            ),
+            child: const Icon(
+              Icons.add,
+              weight: 50.0,
+              color: Colors.white,
+            ),
           )),
           color: ColorConstants.colorAppBar,
           minHeight: 40,
@@ -127,11 +143,21 @@ class _MyHomePageDesktopState extends State<MyHomePageDesktop>
                                                     child: const Icon(
                                                         Icons
                                                             .downloading_rounded,
-                                                        weight: 20.0),
+                                                        weight: 20.0,
+                                                        color: AppColors
+                                                            .IconColor),
                                                     onTap: () async {
+                                                      setState(() {
+                                                        _estaDescargando = true;
+                                                      });
                                                       await filtrarYDescargarCSV(
                                                           dataPaymentsDataForCsv,
                                                           selectedDate);
+
+                                                      setState(() {
+                                                        _estaDescargando =
+                                                            false;
+                                                      });
                                                     },
                                                   ),
                                             DateSelector(

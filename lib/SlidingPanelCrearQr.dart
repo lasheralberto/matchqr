@@ -33,6 +33,7 @@ class _SlidingPanelQRState extends State<SlidingPanelQR> {
   var qrStyle;
   Color mycolor = Colors.black;
   String? accountOnboardUrl;
+  bool _qrLoading = false;
 
   dynamic addDataStyleQR() async {
     setState(() {
@@ -50,17 +51,19 @@ class _SlidingPanelQRState extends State<SlidingPanelQR> {
     });
   }
 
-  void createQRpayment() async {
+  Future<bool> createQRpayment() async {
     // Verificar los campos comunes primero
     if (widget.prodNameController.text.isEmpty ||
         widget.prodDescControlller.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Debes cumplimentar todos los campos')),
       );
-      return; // Salir temprano si los campos comunes están vacíos
+      return false; // Salir temprano si los campos comunes están vacíos
+    } else {
+      var _isAccCreated = await stripeConnectCheckout();
+      return _isAccCreated;
     }
 
-    stripeConnectCheckout();
     // checkOutNormal(prodNameController.text, prodDescController.text, qrStyle, groupController.text);
   }
 
@@ -82,7 +85,7 @@ class _SlidingPanelQRState extends State<SlidingPanelQR> {
     }
   }
 
-  void stripeConnectCheckout() async {
+  Future<bool> stripeConnectCheckout() async {
     var accountStripe = await createAccountLink();
 
     // Update the state with the account onboarding URL
@@ -91,7 +94,7 @@ class _SlidingPanelQRState extends State<SlidingPanelQR> {
     });
 
     // Launch the URL for the user to complete account setup
-    launchUrl(Uri.parse(accountOnboardUrl.toString()));
+    await launchUrl(Uri.parse(accountOnboardUrl.toString()));
 
     // Check if the user has completed the onboarding
     var isOnboarded = await isInfoSubmitted(accountStripe['account']['id']);
@@ -114,6 +117,10 @@ class _SlidingPanelQRState extends State<SlidingPanelQR> {
           typeOfInsert: 'stripeConnect',
           qrStyle: qrStyle,
           group: widget.groupController.text);
+
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -342,7 +349,16 @@ class _SlidingPanelQRState extends State<SlidingPanelQR> {
                   backgroundColor: AppColors.IconColor),
               onPressed: () async {
                 addDataStyleQR();
-                createQRpayment();
+
+                setState(() {
+                  _qrLoading = true;
+                });
+
+                var _isQrCreated = await createQRpayment();
+
+                setState(() {
+                  _qrLoading = _isQrCreated == true ? false : true;
+                });
 
                 //si el usuario ha terminado el formulario --> True
               },
@@ -353,10 +369,20 @@ class _SlidingPanelQRState extends State<SlidingPanelQR> {
                     color: Colors.white,
                     fontSize: FontSize.large.value),
               ),
-              icon: const Icon(
-                Icons.qr_code_rounded,
-                color: Colors.white,
-              )),
+              icon: _qrLoading == true
+                  ? Container(
+                      width: 24,
+                      height: 24,
+                      padding: const EdgeInsets.all(2.0),
+                      child: const CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 3,
+                      ),
+                    )
+                  : const Icon(
+                      Icons.qr_code_rounded,
+                      color: Colors.white,
+                    )),
         ),
       ],
     );

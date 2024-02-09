@@ -53,12 +53,12 @@ class SidebarXCustom extends StatelessWidget {
           const Divider(color: Colors.blueGrey), // Divider azul grisáceo
       items: const [
         SidebarXItem(
-          icon: Icons.home,
-          label: 'Menú QR',
+          icon: Icons.qr_code_sharp,
+          label: '',
         ),
         SidebarXItem(
           icon: Icons.add_chart,
-          label: 'Administración',
+          label: '',
         ),
         // Añade más elementos según sea necesario
       ],

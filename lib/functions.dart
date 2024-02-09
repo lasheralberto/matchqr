@@ -444,7 +444,7 @@ Future<bool> isInfoSubmitted(String accId) async {
   var url = Uri.parse('${AppUrl.AzureBaseUrl}retrieveAccInfo/');
   var headers = {'Content-Type': 'application/json'};
   int retryCount = 0;
-  int maxRetries = 30; // Set a maximum number of retries
+  int maxRetries = 10; // Set a maximum number of retries
 
   bool isInfoSub = false;
 
@@ -535,7 +535,6 @@ Map<String, String> generateTimeIntervals(DateTime date, int minutes) {
 
   return intervals;
 }
-
 
 Future<dynamic> updateIntervalosSeleccionados(String email, String accId,
     String dayKey, Map<String, String> intervalosSeleccionados) async {
@@ -664,14 +663,10 @@ Map<String, dynamic> aplanarJson(Map<String, dynamic> json,
     'session_data.amount_total',
     'session_data.created',
     'session_data.currency',
-    'session_data.metadata.pista_name'
-    //'session_data.customer_details.address.city',
-    //'session_data.customer_details.address.country',
-    //'session_data.customer_details.address.line1',
-    //'session_data.customer_details.address.postal_code',
+    'session_data.metadata_cust.pista_name',
     'session_data.customer_details.email',
     'session_data.customer_details.name',
-    'session_data.customer_details.phone',
+    'session_data.customer_details.phone'
   };
 
   void funcionAplanar(Map<String, dynamic> subJson, String currentPrefix) {

@@ -39,7 +39,7 @@ class _LoginWidgetMobileState extends State<LoginWidgetMobile> {
     var screenSizeW = MediaQuery.of(context).size.width;
     var screenSizeH = MediaQuery.of(context).size.width;
     return Column(
-      // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         Center(
           child: Container(
