@@ -4,6 +4,11 @@ on:
   push:
     branches:
       - main  # Asume que 'main' es tu rama de desarrollo principal
+      
+permissions:
+  contents: write
+  actions: read
+
 
   
 jobs:
