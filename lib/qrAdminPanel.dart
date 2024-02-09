@@ -597,7 +597,8 @@ void showInfoMatchesPopUp(
                                                       : const SizedBox.shrink()
                                                 ],
                                               ),
-                                              subtitle: Wrap(
+                                              subtitle: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                                 children: [
                                                   Text(
                                                     (transaction['session_data']
