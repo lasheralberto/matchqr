@@ -113,7 +113,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                         child: Text(
                           LoginConstants.logInBox,
                           style: const TextStyle(
-                              color: Colors.white, fontWeight: FontWeight.w400),
+                              color: Colors.red, fontWeight: FontWeight.w400),
                         ), // Usa LoginConstants.logInBox si está disponible
                       ),
                     ),
