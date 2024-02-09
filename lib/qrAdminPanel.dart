@@ -520,7 +520,7 @@ void showInfoMatchesPopUp(
                                       padding: const EdgeInsets.all(8.0),
                                       child: Center(
                                         child: SizedBox(
-                                          width: MediaQuery.of(context).size.width * 0.8
+                                          width: MediaQuery.of(context).size.width * 0.8,
                                           child: Card(
                                             color: containsRefund == true
                                                 ? Colors.red
