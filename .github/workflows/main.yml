@@ -16,6 +16,7 @@ jobs:
         uses: subosito/flutter-action@v2  # Actualizado a la versión más reciente
         with:
           channel: 'dev'  # Asegúrate de usar el canal que necesites
+          flutter-version: '3.2.0'
 
       - name: Enable Flutter Web
         run: flutter config --enable-web
