@@ -10,8 +10,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-        with:
-          persist-credentials: false
 
       - uses: subosito/flutter-action@v2
         with:
@@ -20,6 +18,11 @@ jobs:
       - run: flutter clean
       - run: flutter pub get
       - run: flutter build web --release
+
+      - name: Configure Git
+        run: |
+          git config --local user.email "lasheralberto@gmail.com"
+          git config --local user.name "lasheralberto"
 
       - name: Deploy to gh-pages
         run: |
