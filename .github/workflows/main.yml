@@ -31,4 +31,5 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./build/web
-        clean: true
+        cname: www.matchqr.es
+
