@@ -1,35 +1,18 @@
-name: Deploy Flutter Web App to GitHub Pages
-
+name: Flutter Web Deploy
 on:
   push:
     branches:
-      - main  # Asume que 'main' es tu rama de desarrollo principal
-
-permissions:
-  contents: write
-  actions: read
-
+      - main
 jobs:
-  build-and-deploy:
+  build:    
     runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@v3  # Actualizado a la versión más reciente
-
-    - name: Setup Flutter
-      uses: subosito/flutter-action@v2  # Asegúrate de usar la versión más reciente compatible
-      with:
-        flutter-version: '3.16.0' # Especifica la versión de Flutter
-
-    - name: Build Web
-      run: flutter build web --release
-
-    - name: Setup CNAME
-      run: echo 'www.matchqr.es' > ./build/web/CNAME
-
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3.8.0  # Especifica una versión más precisa si es necesario
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./build/web
-        cname: www.matchqr.es  # Esta línea podría no ser necesaria si ya estás creando el archivo CNAME manualmente
-        keep_files: true  # Mantiene los archivos existentes en gh-pages, útil si tienes archivos que no se generan en cada build
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+      - run: flutter build web --release --base-href /flutter_web/
+      - run: git config user.name github-actions
+      - run: git config user.email github-actions@github.com
+      - run: git --work-tree build/web add --all
+      - run: git commit -m "Automatic deployment by github-actions"
+      - run: git push origin HEAD:gh-pages --force
