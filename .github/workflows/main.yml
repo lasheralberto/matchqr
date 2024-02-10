@@ -13,12 +13,12 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3  # Actualizado a la versión más reciente
 
     - name: Setup Flutter
-      uses: subosito/flutter-action@v1
+      uses: subosito/flutter-action@v2  # Asegúrate de usar la versión más reciente compatible
       with:
-        flutter-version: '3.16.0' # Usa la versión de Flutter que necesites
+        flutter-version: '3.16.0' # Especifica la versión de Flutter
 
     - name: Build Web
       run: flutter build web --release
@@ -27,9 +27,9 @@ jobs:
       run: echo 'www.matchqr.es' > ./build/web/CNAME
 
     - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
+      uses: peaceiris/actions-gh-pages@v3.8.0  # Especifica una versión más precisa si es necesario
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./build/web
-        cname: www.matchqr.es
-
+        cname: www.matchqr.es  # Esta línea podría no ser necesaria si ya estás creando el archivo CNAME manualmente
+        keep_files: true  # Mantiene los archivos existentes en gh-pages, útil si tienes archivos que no se generan en cada build
