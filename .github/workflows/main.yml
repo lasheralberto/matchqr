@@ -15,7 +15,7 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '2.x.x' # Especifica la versión exacta de Flutter que necesitas
+          flutter-version: '3.16.0' # Especifica la versión exacta de Flutter que necesitas
 
       - name: Build Flutter Web
         run: flutter build web --release --base-href=/flutter_web/
