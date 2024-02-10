@@ -45,5 +45,5 @@ jobs:
           echo ""
           echo "Committing to gh-pages: ${{ github.event.head_commit.message }}"
           echo ""
-          git commit -m "${{ github.event.head_commit.message }}"
+          git commit --allow-empty -m "${{ github.event.head_commit.message }}"
           git push origin gh-pages --force
