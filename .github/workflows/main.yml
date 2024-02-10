@@ -1,29 +1,38 @@
-name: Flutter Web Deploy
+name: Flutter Web Deployment
 
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2  # Actualizado a la versión más reciente
 
       - name: Setup Flutter
-        uses: subosito/flutter-action@v2
+        uses: subosito/flutter-action@v2  # Actualizado a la versión más reciente
         with:
-          flutter-version: '3.16.0' # Especifica la versión exacta de Flutter que necesitas
+          channel: 'dev'  # Asegúrate de usar el canal que necesites
+
+      - name: Enable Flutter Web
+        run: flutter config --enable-web
+
+      - name: Install Dependencies
+        run: flutter pub get
 
       - name: Build Flutter Web
-        run: flutter build web --release --base-href=/flutter_web/
+        run: flutter build web --release
 
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./build/web
-          keep_files: true  # Conserva archivos como CNAME que no están en el directorio de construcción
-          # No es necesario especificar 'cname: www.matchqr.es' aquí porque el archivo CNAME ya debería estar configurado
+        run: |
+          cd build/web
+          git init
+          git config user.email "lasheralberto@gmail.com"
+          git config user.name "lasheralberto"
+          git add --all
+          git commit -m "Deploy updates"
+          git push --force "https://${{ secrets.secret_token }}@github.com/lasheralberto/lasheralberto.github.io.git" gh-pages
+
