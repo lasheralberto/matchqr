@@ -70,7 +70,7 @@ class AppUrl {
 class LoginConstants {
   static String landingSlogan =
       "Facilita los pagos, fortalece tu gestión. La solución inteligente para tu club.";
-  static String emailBox = 'Correo electrónico';
+  static String emailBox = 'e-mail';
   static String passRecover = 'Recuperación de contraseña';
   static String passwordBox = 'Contraseña';
   static String confirmPass = 'Confirmar contraseña';
