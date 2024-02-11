@@ -1,5 +1,6 @@
-import 'dart:async';
+
 import 'dart:html';
+import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/material.dart';
@@ -29,7 +30,7 @@ void main() async {
 
   const useHashUrlStrategy = bool.fromEnvironment('ENABLE_HASH_URL_STRATEGY', defaultValue: false);
   if (!useHashUrlStrategy) {
-    setUrlStrategy();
+    setUrlStrategy(const HashUrlStrategy());
   }
 
   runApp(const MyApp());
