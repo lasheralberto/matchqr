@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:html';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:payment_tool/HomePageDesktop.dart';
@@ -13,7 +12,6 @@ import 'package:payment_tool/cuadraditosLanding.dart';
 import 'package:payment_tool/initialLanding.dart';
 import 'firebase_options.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 
 
 GoogleSignIn googleSignIn = GoogleSignIn(
@@ -24,7 +22,6 @@ FirebaseAuth authFirebase = FirebaseAuth.instance;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  unawaited(MobileAds.instance.initialize());
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
