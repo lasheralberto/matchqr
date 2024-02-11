@@ -30,6 +30,11 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  const useHashUrlStrategy = bool.fromEnvironment('ENABLE_HASH_URL_STRATEGY', defaultValue: false);
+  if (!useHashUrlStrategy) {
+    setUrlStrategy();
+  }
+
   runApp(const MyApp());
 }
 
