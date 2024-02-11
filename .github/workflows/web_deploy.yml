@@ -2,48 +2,41 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    # Update branch according from where you will be pushing the code
-    branches: [ main ]
+    branches:
+      - master
 
-jobs:
-  build:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Deploy to the github-pages environment
+
+
+jobs:  
+  build-and-deploy:
     runs-on: ubuntu-latest
-    env:
-      my_secret: ${{secrets.SECRET_TOKEN}}
-
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v3
-      - uses: subosito/flutter-action@v2
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'
+          channel: stable
+      - name: Install dependencies
+        run: flutter pub get
+        working-directory: ${{env.working-directory}}
+      - name: Build web app
+        run: flutter build web
+        working-directory: ${{env.working-directory}}
 
-      - run: flutter clean
-      - run: flutter pub get
-      - run: flutter build web --release
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: build/web/
 
-      # Web deploy now is contained in build/web directory
-      - run: |
-          cd build
-          mkdir web-deploy
-          cd web-deploy
-          #! Update with your Email ID associated with GitHub
-          git config --global user.email lasheralberto@gmail.com
-          #! Update with your username associated with GitHub
-          git config --global user.name lasheralberto
-          git config --global init.defaultBranch main
-          git init
-          # the repository to push the deploy into
-          #! Update the following with your username and repository
-          git remote add origin https://${{secrets.SECRET_TOKEN}}@github.com/lasheralberto/lasheralberto.github.io.git
-          git fetch origin gh-pages
-          git switch gh-pages
-          # copy the build that is there in ROOT/build/web into ROOT/build/web-deploy
-          cp -R ../web/* .
-          git status
-          git add .
-          # add commit of the previous commit from main
-          echo ""
-          echo "Committing to gh-pages: ${{ github.event.head_commit.message }}"
-          echo ""
-          git commit --allow-empty -m "${{ github.event.head_commit.message }}"
-          git push origin gh-pages --force
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
