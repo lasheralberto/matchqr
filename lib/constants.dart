@@ -67,10 +67,11 @@ class AppUrl {
   static String AzureBaseUrl = 'https://doogiapp.azurewebsites.net/';
 }
 
+// La solución inteligente para tu club de pádel.
 class LoginConstants {
   static String landingSlogan =
-      "Facilita los pagos, fortalece tu gestión. La solución inteligente para tu club de pádel.";
-  static String emailBox = 'E.mail';
+      "Facilita los pagos, fortalece tu gestión.";
+  static String emailBox = 'E mail';
   static String passRecover = 'Recuperación de contraseña';
   static String passwordBox = 'Contraseña';
   static String confirmPass = 'Confirmar contraseña';

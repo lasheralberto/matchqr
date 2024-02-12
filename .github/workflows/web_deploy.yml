@@ -1,43 +1,16 @@
-name: Deploy Branch Previews
+name: Gh-Pages
 
-# Can also be restricted by branches if you choose.
 on:
   push:
-    branches:
-      - '**'
-      - '!gh-pages'
-
-# Write permissions need to be enabled for the workflow to write to GitHub Pages.
-permissions:
-  contents: write
+    branches: [main]
 
 jobs:
-  deploy_web:
-    name: Deploy Flutter Web to GitHub Pages
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-      - name: Install and set Flutter version
-        uses: subosito/flutter-action@v2
+      - uses: actions/checkout@v2 # Only works with v2
+      - uses: subosito/flutter-action@v1
+      - uses: bluefireteam/flutter-gh-pages@v7
         with:
-          channel: "stable"
-          flutter-version: "any"
-          cache: true
-          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
-          cache-path: "${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:"
-      - name: Get branch name from event
-        id: branch-name
-        uses: tj-actions/branch-names@v8
-      - name: Build Web
-        run: |
-          flutter pub get
-          flutter build web --release --web-renderer=canvaskit --base-href="/${{ github.event.repository.name }}/${{ steps.branch-name.outputs.current_branch }}/"
-      - name: Deploy to GitHub Pages 🚀
-        uses: JamesIves/github-pages-deploy-action@releases/v4
-        with:
-          # required for index file workflow to be triggered automatically
-          token: ${{ secrets.PAT }}
-          branch: gh-pages
-          folder: build/web
-          target-folder: "${{ steps.branch-name.outputs.current_branch }}"
+          baseHref: /
