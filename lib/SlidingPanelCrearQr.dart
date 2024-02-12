@@ -238,153 +238,141 @@ class _SlidingPanelQRState extends State<SlidingPanelQR> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: LayoutBuilder(
-            builder: (context, constr) {
-              return Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: SingleChildScrollView(
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  SizedBox(
+                    width: 600,
+                    child: Card(
+                      margin: const EdgeInsets.all(40),
+                      color: ColorConstants.colorCard,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: StyleConstants
+                            .border, // Adjust the radius as needed
+                      ),
+                      elevation: 30.0, // Add elevation for a card-like effect
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            SizedBox(
-                              width: 600,
-                              child: Card(
-                                margin: const EdgeInsets.all(40),
-                                color: ColorConstants.colorCard,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: StyleConstants
-                                      .border, // Adjust the radius as needed
-                                ),
-                                elevation:
-                                    30.0, // Add elevation for a card-like effect
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
+                            //////////////////////////buttons for editing QR and mass generation
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Row(
                                     children: [
-                                      //////////////////////////buttons for editing QR and mass generation
-                                      Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
-                                        children: [
-                                          FittedBox(
-                                            fit: BoxFit.scaleDown,
-                                            child: Row(
-                                              children: [
-                                                const Text(
-                                                    'Con tecnología de pagos de'),
-                                                Image.asset(
-                                                  AssetsImages.stripeLogo,
-                                                  height: 70,
-                                                  width: 100,
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                          ElevatedButton.icon(
-                                            label: Text(
-                                              TextFieldsTexts.personalizarQR,
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize:
-                                                      FontSize.large.value),
-                                            ),
-                                            style: ElevatedButton.styleFrom(
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      StyleConstants.border),
-                                              backgroundColor:
-                                                  AppColors.IconColor,
-                                              padding:
-                                                  const EdgeInsets.all(16.0),
-                                            ),
-                                            onPressed: () =>
-                                                _showOptionsDialog(context),
-                                            icon: const Icon(
-                                              Icons.style_outlined,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      //////////////////////////buttons for editing QR and mass generation
-
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      PagosTextFields(
-                                        email: widget.email,
-                                        prodNameController:
-                                            widget.prodNameController,
-                                        prodDescController:
-                                            widget.prodDescControlller,
-                                        groupController: widget.groupController,
+                                      const Text('Con tecnología de pagos de'),
+                                      Image.asset(
+                                        AssetsImages.stripeLogo,
+                                        height: 70,
+                                        width: 100,
                                       )
                                     ],
                                   ),
                                 ),
-                              ),
+                                ElevatedButton.icon(
+                                  label: Text(
+                                    TextFieldsTexts.personalizarQR,
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: FontSize.large.value),
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: StyleConstants.border),
+                                    backgroundColor: AppColors.IconColor,
+                                    padding: const EdgeInsets.all(16.0),
+                                  ),
+                                  onPressed: () => _showOptionsDialog(context),
+                                  icon: const Icon(
+                                    Icons.style_outlined,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            //////////////////////////buttons for editing QR and mass generation
+
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            PagosTextFields(
+                              email: widget.email,
+                              prodNameController: widget.prodNameController,
+                              prodDescController: widget.prodDescControlller,
+                              groupController: widget.groupController,
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            SizedBox(
+                              width: 200,
+                              child: ElevatedButton.icon(
+                                  style: ElevatedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: StyleConstants.border),
+                                      padding: const EdgeInsets.all(16.0),
+                                      backgroundColor: AppColors.IconColor),
+                                  onPressed: () async {
+                                    addDataStyleQR();
+
+                                    setState(() {
+                                      _qrLoading = true;
+                                    });
+
+                                    var _isQrCreated = await createQRpayment();
+
+                                    setState(() {
+                                      _qrLoading =
+                                          _isQrCreated == true ? false : true;
+                                    });
+
+                                    //si el usuario ha terminado el formulario --> True
+                                  },
+                                  label: Text(
+                                    TextFieldsTexts.generarQR,
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                        fontSize: FontSize.large.value),
+                                  ),
+                                  icon: _qrLoading == true
+                                      ? Container(
+                                          width: 24,
+                                          height: 24,
+                                          padding: const EdgeInsets.all(2.0),
+                                          child:
+                                              const CircularProgressIndicator(
+                                            color: Colors.white,
+                                            strokeWidth: 3,
+                                          ),
+                                        )
+                                      : const Icon(
+                                          Icons.qr_code_rounded,
+                                          color: Colors.white,
+                                        )),
                             ),
                           ],
                         ),
                       ),
-                    )
-                  ]);
-            },
-          ),
-        ),
-        SizedBox(
-          width: 200,
-          child: ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: StyleConstants.border),
-                  padding: const EdgeInsets.all(16.0),
-                  backgroundColor: AppColors.IconColor),
-              onPressed: () async {
-                addDataStyleQR();
-
-                setState(() {
-                  _qrLoading = true;
-                });
-
-                var _isQrCreated = await createQRpayment();
-
-                setState(() {
-                  _qrLoading = _isQrCreated == true ? false : true;
-                });
-
-                //si el usuario ha terminado el formulario --> True
-              },
-              label: Text(
-                TextFieldsTexts.generarQR,
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    fontSize: FontSize.large.value),
+                    ),
+                  ),
+                ],
               ),
-              icon: _qrLoading == true
-                  ? Container(
-                      width: 24,
-                      height: 24,
-                      padding: const EdgeInsets.all(2.0),
-                      child: const CircularProgressIndicator(
-                        color: Colors.white,
-                        strokeWidth: 3,
-                      ),
-                    )
-                  : const Icon(
-                      Icons.qr_code_rounded,
-                      color: Colors.white,
-                    )),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }
