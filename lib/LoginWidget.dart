@@ -11,6 +11,7 @@ import 'package:payment_tool/contactForm.dart';
 import 'package:payment_tool/main.dart';
 import 'package:payment_tool/recoverPass.dart';
 import 'package:payment_tool/spreadSheetTable.dart';
+import 'package:url_launcher/url_launcher.dart';
 // Asegúrate de importar los archivos y paquetes necesarios, como AssetsImages, LoginConstants, etc.
 
 class LoginWidget extends StatefulWidget {
@@ -113,7 +114,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                         child: Text(
                           LoginConstants.logInBox,
                           style: const TextStyle(
-                              color: Colors.red, fontWeight: FontWeight.w400),
+                              color: Colors.white, fontWeight: FontWeight.w400),
                         ), // Usa LoginConstants.logInBox si está disponible
                       ),
                     ),
@@ -226,6 +227,35 @@ class _LoginWidgetState extends State<LoginWidget> {
                 );
               },
               child: const Text('Contacto'),
+            ),
+          ],
+        ),
+        SizedBox(
+          height: 10,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // InkWell(
+            //   onTap: (){
+            //     launchUrl()
+            //   },
+            //   child: SizedBox(
+            //       height: 35,
+            //       width: 35,
+            //       child: Image.asset(AssetsImages.linkedinlogo)),
+            // ),
+            // SizedBox(
+            //   width: 10,
+            // ),
+            InkWell(
+              onTap: () {
+                launchUrl(Uri.parse(AppUrl.xUrl));
+              },
+              child: SizedBox(
+                  height: 25,
+                  width: 25,
+                  child: Image.asset(AssetsImages.xlogo)),
             ),
           ],
         ),

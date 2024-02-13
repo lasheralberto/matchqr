@@ -40,6 +40,8 @@ class AssetsImages {
   static String LandingPageBackgroundWallpaper = '/images/qr_wallpap.png';
   static String logoMatchQr = 'images/landing_images/matchqrLogo.png';
   static String stripeLogo = 'images/stripe_pay.png';
+  static String linkedinlogo = 'images/landing_images/linkedinlogo.png';
+  static String xlogo = 'images/landing_images/xlogo.png';
 }
 
 class ApiKeys {
@@ -65,12 +67,13 @@ class PayConstants {
 class AppUrl {
   static String localhost = 'http://localhost:59815';
   static String AzureBaseUrl = 'https://doogiapp.azurewebsites.net/';
+  static String xUrl = 'https://twitter.com/MatchQr';
+ 
 }
 
 // La solución inteligente para tu club de pádel.
 class LoginConstants {
-  static String landingSlogan =
-      "Facilita los pagos, fortalece tu gestión.";
+  static String landingSlogan = "Facilita los pagos, fortalece tu gestión.";
   static String emailBox = 'E mail';
   static String passRecover = 'Recuperación de contraseña';
   static String passwordBox = 'Contraseña';
