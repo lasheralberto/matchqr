@@ -5,7 +5,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:payment_tool/HomePageDesktop.dart';
-
 import 'package:payment_tool/SuccessPaymentPage.dart';
 import 'package:payment_tool/constants.dart';
 import 'package:firebase_core/firebase_core.dart';

@@ -6,10 +6,14 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:payment_tool/HomePageDesktop.dart';
 import 'package:payment_tool/constants.dart';
 import 'package:payment_tool/SignUpPage.dart';
+import 'package:payment_tool/contactForm.dart';
 import 'package:payment_tool/cuadraditosLanding.dart';
 import 'package:payment_tool/main.dart';
 import 'package:payment_tool/functions.dart';
 import 'dart:math';
+import 'package:url_launcher/url_launcher.dart';
+
+import 'package:payment_tool/spreadSheetTable.dart';
 // Asegúrate de importar los archivos y paquetes necesarios, como AssetsImages, LoginConstants, etc.
 
 class LoginWidgetMobile extends StatefulWidget {
@@ -38,148 +42,230 @@ class _LoginWidgetMobileState extends State<LoginWidgetMobile> {
   Widget build(BuildContext context) {
     var screenSizeW = MediaQuery.of(context).size.width;
     var screenSizeH = MediaQuery.of(context).size.width;
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        Center(
-          child: Container(
-            height: screenSizeH / 4,
-            width: screenSizeW / 4,
-            decoration: BoxDecoration(
-                image: DecorationImage(
-                    image: AssetImage(AssetsImages.logoMatchQr))),
-          ),
-        ),
-        SizedBox(
-          width: screenSizeW / 1.2,
-          child: Form(
-            key: _formKey,
-            child: Padding(
-              padding: const EdgeInsets.all(38.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  TextFormField(
-                    controller: _emailController,
-                    decoration: InputDecoration(
-                        labelStyle: const TextStyle(color: Colors.white),
-                        labelText: LoginConstants
-                            .emailBox), // Usa LoginConstants.emailBox si está disponible
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter some text'; // Usa LoginConstants.enterSomeText si está disponible
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    obscureText: true,
-                    controller: _passwordController,
-                    decoration: InputDecoration(
-                        labelStyle: const TextStyle(color: Colors.white),
-                        labelText: LoginConstants
-                            .passwordBox), // Usa LoginConstants.passwordBox si está disponible
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter some text'; // Usa LoginConstants.enterSomeText si está disponible
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  Center(
-                    child: SizedBox(
-                      height: 40,
-                      width: 250,
-                      child: OutlinedButton(
-                        style: ButtonStyle(
-                          elevation: MaterialStateProperty.all(10.0),
-                          backgroundColor:
-                              MaterialStateProperty.all(Colors.white),
-                          shape: MaterialStateProperty.all(
-                            RoundedRectangleBorder(
-                              borderRadius: StyleConstants.border,
-                            ),
-                          ),
-                        ),
-
-                        onPressed: () async {
-                          if (_formKey.currentState!.validate()) {
-                            // Lógica de inicio de sesión
-                            await _loginUser(_emailController.text,
-                                _passwordController.text);
-
-                            ///_emailController.text,
-                            //_passwordController.text)
-                          }
-                        },
-                        child: Text(LoginConstants
-                            .logInBox), // Usa LoginConstants.logInBox si está disponible
-                      ),
-                    ),
-                  ),
-                  // ... Aquí irían otros widgets de recuperación de contraseña, signup,etc ...
-
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Center(
-                    child: SizedBox(
-                      width: 250,
-                      child: GoogleSignInButton(
-                        iconSymbol: Image(
-                          image: AssetImage(AssetsImages.GoogleSignInLogo),
-                          height: 25.0,
-                        ),
-                        buttonText: LoginConstants.loginGoogleBox,
-                        onTap: () async {
-                          await _loginUserGoogle();
-                        },
-                      ),
-                    ),
-                  ),
-                  // Button to access the app
-                  Center(
-                    child: InkWell(
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return const SignUpPopUp(); // Show the SignUpPopUp dialog
-                          },
-                        );
-                      },
-                      child: Text(
-                        LoginConstants.registerMe,
-                        style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w200,
-                            color: Colors.white),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Center(
-                    child: InkWell(
-                      onTap: () {
-                        recoverPass(context);
-                      },
-                      child: Text(
-                        LoginConstants.recoverPassBox,
-                        style: const TextStyle(
-                            fontWeight: FontWeight.w200, color: Colors.white),
-                      ),
-                    ),
-                  ),
-                ],
+    return SingleChildScrollView(
+      child: Align(
+        alignment: Alignment.bottomCenter,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const SizedBox(
+              height: 100,
+            ),
+            Center(
+              child: Container(
+                height: screenSizeH / 4,
+                width: screenSizeW / 4,
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                        image: AssetImage(AssetsImages.logoMatchQr))),
               ),
             ),
-          ),
+            SizedBox(
+              height: 10,
+            ),
+            SizedBox(
+              width: screenSizeW / 1.2,
+              child: Form(
+                key: _formKey,
+                child: Padding(
+                  padding: const EdgeInsets.all(38.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      TextFormField(
+                        controller: _emailController,
+                        decoration: InputDecoration(
+                            labelStyle: const TextStyle(color: Colors.white),
+                            labelText: LoginConstants
+                                .emailBox), // Usa LoginConstants.emailBox si está disponible
+                        validator: (String? value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter some text'; // Usa LoginConstants.enterSomeText si está disponible
+                          }
+                          return null;
+                        },
+                      ),
+                      TextFormField(
+                        obscureText: true,
+                        controller: _passwordController,
+                        decoration: InputDecoration(
+                            labelStyle: const TextStyle(color: Colors.white),
+                            labelText: LoginConstants
+                                .passwordBox), // Usa LoginConstants.passwordBox si está disponible
+                        validator: (String? value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter some text'; // Usa LoginConstants.enterSomeText si está disponible
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      Center(
+                        child: SizedBox(
+                          height: 40,
+                          width: 250,
+                          child: OutlinedButton(
+                            style: ButtonStyle(
+                              elevation: MaterialStateProperty.all(10.0),
+                              backgroundColor:
+                                  MaterialStateProperty.all(Colors.white),
+                              shape: MaterialStateProperty.all(
+                                RoundedRectangleBorder(
+                                  borderRadius: StyleConstants.border,
+                                ),
+                              ),
+                            ),
+
+                            onPressed: () async {
+                              if (_formKey.currentState!.validate()) {
+                                // Lógica de inicio de sesión
+                                await _loginUser(_emailController.text,
+                                    _passwordController.text);
+
+                                ///_emailController.text,
+                                //_passwordController.text)
+                              }
+                            },
+                            child: Text(LoginConstants
+                                .logInBox), // Usa LoginConstants.logInBox si está disponible
+                          ),
+                        ),
+                      ),
+                      // ... Aquí irían otros widgets de recuperación de contraseña, signup,etc ...
+
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Center(
+                        child: SizedBox(
+                          width: 250,
+                          child: GoogleSignInButton(
+                            iconSymbol: Image(
+                              image: AssetImage(AssetsImages.GoogleSignInLogo),
+                              height: 25.0,
+                            ),
+                            buttonText: LoginConstants.loginGoogleBox,
+                            onTap: () async {
+                              await _loginUserGoogle();
+                            },
+                          ),
+                        ),
+                      ),
+                      // Button to access the app
+                      Center(
+                        child: InkWell(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return const SignUpPopUp(); // Show the SignUpPopUp dialog
+                              },
+                            );
+                          },
+                          child: Text(
+                            LoginConstants.registerMe,
+                            style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w200,
+                                color: Colors.white),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Center(
+                        child: InkWell(
+                          onTap: () {
+                            recoverPass(context);
+                          },
+                          child: Text(
+                            LoginConstants.recoverPassBox,
+                            style: const TextStyle(
+                                fontWeight: FontWeight.w200,
+                                color: Colors.white),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      buildFooter()
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
+    );
+  }
+
+  Widget buildFooter() {
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Column(
+        children: [
+          InkWell(
+            onTap: () {
+              launchUrl(Uri.parse(AppUrl.xUrl));
+            },
+            child: SizedBox(
+                height: 25, width: 25, child: Image.asset(AssetsImages.xlogo)),
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: TextButton(
+              child: const Text(
+                '© 2024 MatchQR',
+                style: TextStyle(fontWeight: FontWeight.w200),
+              ),
+              onPressed: () {},
+            ),
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          TextButton(
+            onPressed: () {
+              /* Navegar a la página de política de privacidad */
+            },
+            child: GestureDetector(
+              child: const Text('Política de Privacidad'),
+              onTap: () {
+                showPrivacyPopUp(context, 'Política de privacidad',
+                    PrivacyConstants.privacyText);
+              },
+            ),
+          ),
+          const SizedBox(width: 10),
+          TextButton(
+            onPressed: () {
+              /* Navegar a la página de términos y condiciones */
+              showLicensePage(context: context);
+            },
+            child: const Text('Términos y Condiciones'),
+          ),
+          const SizedBox(width: 10),
+          TextButton(
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                builder: (context) {
+                  return const ContactForm();
+                },
+              );
+            },
+            child: const Text('Contacto'),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+        ],
+      ),
     );
   }
 

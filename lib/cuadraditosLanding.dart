@@ -29,13 +29,28 @@ class _CuadraditosLandingState extends State<CuadraditosLanding>
   int _textIndex = 0;
   Timer? _textTimer;
 
+  List<Widget> cardDataList = [
+    const MyCardWidget(
+      icon: Icons.qr_code_rounded,
+      title: 'Genera QR de pago para tus pistas',
+    ),
+    const MyCardWidget(
+      icon: Icons.wallet,
+      title: 'Monitorea la facturación de tus pistas',
+    ),
+    const MyCardWidget(
+      icon: Icons.album,
+      title: 'Gestiona devoluciones con un click',
+    ),
+  ];
+
   @override
   Widget build(BuildContext context) {
     screenSize = MediaQuery.of(context).size;
     return screenSize.width > 600
         ? Scaffold(
             body: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 // Parte izquierda con scroll
                 Expanded(
@@ -80,100 +95,16 @@ class _CuadraditosLandingState extends State<CuadraditosLanding>
                           height: 20,
                         ),
                         // Aquí puedes añadir más widgets que se desplazarán con el scroll
-                        const Row(
-                          // runAlignment: WrapAlignment.start,
-                          children: [
-                            Align(
-                              alignment: Alignment.topLeft,
-                              child: Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: SizedBox(
-                                  width: 200,
-                                  child: Card(
-                                    color: AppColors.IconColor,
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: <Widget>[
-                                        ListTile(
-                                          leading: Icon(
-                                            Icons.qr_code_rounded,
-                                            color: AppColors.IconColor2,
-                                          ),
-                                          title: Text(
-                                            'Genera QR de pago para tus pistas',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w700,
-                                                color: Colors.white),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Align(
-                              alignment: Alignment.topLeft,
-                              child: Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: SizedBox(
-                                  width: 200,
-                                  child: Card(
-                                      color: AppColors.IconColor,
-                                      child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: <Widget>[
-                                            ListTile(
-                                              leading: Icon(
-                                                Icons.wallet,
-                                                color: AppColors.IconColor2,
-                                              ),
-                                              title: Text(
-                                                'Monitorea la facturación de tus pistas',
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.w700,
-                                                    color: Colors.white),
-                                              ),
-                                            )
-                                          ])),
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Align(
-                              alignment: Alignment.topLeft,
-                              child: Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: SizedBox(
-                                  width: 200,
-                                  child: Card(
-                                      color: AppColors.IconColor,
-                                      child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: <Widget>[
-                                            ListTile(
-                                              leading: Icon(
-                                                Icons.album,
-                                                color: AppColors.IconColor2,
-                                              ),
-                                              title: Text(
-                                                'Gestiona devoluciones con un click',
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.w700,
-                                                    color: Colors.white),
-                                              ),
-                                            )
-                                          ])),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Wrap(
+                            alignment: WrapAlignment.start,
+                            crossAxisAlignment: WrapCrossAlignment.start,
+                            children: cardDataList.map((cardData) {
+                              return cardData;
+                            }).toList(),
+                          ),
+                        )
                       ],
                     ),
                   ),
@@ -319,5 +250,47 @@ class CuadradoPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CuadradoPainter oldDelegate) {
     return true;
+  }
+}
+
+class MyCardWidget extends StatelessWidget {
+  final IconData icon;
+  final String title;
+
+  const MyCardWidget({
+    Key? key,
+    required this.icon,
+    required this.title,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 100,
+      width: 220,
+      child: Card(
+        color: AppColors.IconColor,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const SizedBox(
+              width: 10,
+            ),
+            Icon(icon, color: AppColors.IconColor2),
+            const SizedBox(width: 10),
+            Flexible(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(title,
+                    overflow: TextOverflow.fade,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w700, color: Colors.white)),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
