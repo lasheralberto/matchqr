@@ -1,7 +1,4 @@
-# Created by MichaelCurrin
-# https://gist.github.com/MichaelCurrin/a698731096f78240f653faf9a9127cba
-
-name: Build and deploy 
+name: Build and deploy
 
 on:
   push:
@@ -14,18 +11,19 @@ jobs:
 
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@master
-        with:
-          persist-credentials: false
-          submodules: true  # TODO remove this if not using submodules in Hexo
+        uses: actions/checkout@v2
 
-      - name: Install 🔧
-        run: yarn install
+      - name: Set up Flutter 📦
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.16.7'  # Cambia a la versión de Flutter que estés utilizando
+
+      - name: Install dependencies 🔧
+        run: flutter pub get
 
       - name: Build 🏗️
-        run: |
-          yarn clean
-          yarn build
+        run: flutter build web
+
       - name: Deploy to GH Pages 🚀
         uses: peaceiris/actions-gh-pages@v3
         with:
