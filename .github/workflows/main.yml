@@ -16,6 +16,9 @@ jobs:
       - name: Checkout 🛎️
         uses: actions/checkout@v2
 
+      - name: Update Service Worker version :P
+        run: sed -i "s/CACHE_VERSION = '.*'/CACHE_VERSION = 'v$(date +%s)'/" flutter_service_worker.js
+
       - name: Set up Flutter 📦
         uses: subosito/flutter-action@v2
         with:
