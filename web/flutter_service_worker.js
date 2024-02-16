@@ -2,6 +2,7 @@
 const MANIFEST = 'flutter-app-manifest';
 const TEMP = 'flutter-temp-cache';
 const CACHE_NAME = 'flutter-app-cache';
+const CACHE_VERSION = 'v1';
 
 const RESOURCES = {
     "adview.html": "ee87009cb232c0f5cdeddba2555b3a95",
