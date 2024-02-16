@@ -50,6 +50,17 @@
     <script src="flutter.js" defer></script>
 
     <script>
+    if ('serviceWorker' in navigator) {
+     navigator.serviceWorker.getRegistrations()
+      .then(function(registrations) {
+         for(let registration of registrations) {
+           registration.unregister();
+         }
+     });
+    }
+    </script>
+
+    <script>
         function saveFile(fileName, blobData) {
             const options = {
                 types: [{
