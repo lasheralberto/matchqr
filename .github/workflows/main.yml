@@ -21,8 +21,11 @@ jobs:
         run: |
           git checkout -B gh-pages
 
-      - name: Clean build directory 🧹
+      - name: Clear build/web directory
         run: rm -rf build/web/*
+
+      - name: Copy build files to build/web directory
+        run: cp -r build/. build/web/
 
 
       - name: Update Service Worker version :P
