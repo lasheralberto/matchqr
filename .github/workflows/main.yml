@@ -15,6 +15,8 @@ jobs:
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v2
+      - name: Clean build directory 😊
+        run: rm -rf build/web/*
 
       - name: Update Service Worker version :P
         run: sed -i "s/CACHE_VERSION = '.*'/CACHE_VERSION = 'v$(date +%s)'/" web/flutter_service_worker.js
