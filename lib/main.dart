@@ -12,7 +12,6 @@ import 'package:payment_tool/cuadraditosLanding.dart';
 import 'package:payment_tool/initialLanding.dart';
 import 'firebase_options.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-
 import 'dart:html' as html show window;
 
 GoogleSignIn googleSignIn = GoogleSignIn(
