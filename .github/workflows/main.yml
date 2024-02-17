@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+
 permissions:
   contents: write
   deployments: write
@@ -15,8 +16,11 @@ jobs:
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v2
-      - name: Clean build directory 😊
-        run: rm -rf build/web/*
+
+      - name: Clean build directory 🧹
+        run: |
+          git checkout gh-pages
+          rm -rf build/web/*
 
       - name: Update Service Worker version :P
         run: sed -i "s/CACHE_VERSION = '.*'/CACHE_VERSION = 'v$(date +%s)'/" web/flutter_service_worker.js
@@ -32,9 +36,20 @@ jobs:
       - name: Build 🏗️
         run: flutter build web --pwa-strategy=none
 
-      - name: Deploy to GH Pages 🚀
-        uses: peaceiris/actions-gh-pages@v3
+      - name: Copy build files to build/web directory
+        run: |
+          mkdir -p build/web
+          cp -r build/**/* build/web/
+
+      - name: Commit changes
+        run: |
+          git config --global user.name 'lasheralberto'
+          git config --global user.email 'lasheralberto@users.noreply.github.com'
+          git add -A
+          git commit -m "Deploy: $(date '+%Y-%m-%d %H:%M:%S')"
+      
+      - name: Push changes
+        uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: build/web
-          keep_files: false  # Añade esta línea para asegurar que los archivos antiguos se eliminen antes de desplegar los nuevos
+          branch: gh-pages
