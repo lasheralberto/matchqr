@@ -17,44 +17,22 @@ jobs:
       - name: Checkout 🛎️
         uses: actions/checkout@v2
 
-      - name: Create gh-pages branch if not exists
+      - name: Clear gh-pages branch
         run: |
-          git checkout -B gh-pages
+          git checkout gh-pages
+          git rm -r .
+          git commit -m "Clear gh-pages branch"
+          git push origin gh-pages
 
-      - name: Clear build/web directory
-        run: rm -rf build/web/*
-
-      - name: Copy build files to build/web directory
-        run: cp -r build/. build/web/
-
-
-      - name: Update Service Worker version :P
-        run: sed -i "s/CACHE_VERSION = '.*'/CACHE_VERSION = 'v$(date +%s)'/" web/flutter_service_worker.js
-
-      - name: Set up Flutter 📦
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.16.7'  # Cambia a la versión de Flutter que estés utilizando
-
-      - name: Install dependencies 🔧
-        run: flutter pub get
-
-      - name: Build 🏗️
-        run: flutter build web --pwa-strategy=none
-      - name: Copy build files to build/web directory
+      - name: Build web
         run: |
-           mkdir -p build/web rsync -av --delete build/ build/web/
-      
+          flutter pub get
+          flutter build web --pwa-strategy=none
 
-      - name: Commit changes
+      - name: Copy build files to gh-pages branch
         run: |
-          git config --global user.name 'lasheralberto'
-          git config --global user.email 'lasheralberto@users.noreply.github.com'
+          git checkout gh-pages
+          git checkout main build/
           git add -A
           git commit -m "Deploy: $(date '+%Y-%m-%d %H:%M:%S')"
-      
-      - name: Push changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: gh-pages
+          git push origin gh-pages
