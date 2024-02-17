@@ -17,6 +17,9 @@ jobs:
       - name: Checkout 🛎️
         uses: actions/checkout@v2
 
+      - name: Create gh-pages branch if not exists
+        run: git checkout -B gh-pages
+
       - name: Clear gh-pages branch
         run: |
           git checkout gh-pages
