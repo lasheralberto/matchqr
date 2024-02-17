@@ -1,4 +1,0 @@
-User-agent: *
-Disallow: /admin/
-Disallow: /private/
-Sitemap: https://www.matchqr.es/sitemap.xml

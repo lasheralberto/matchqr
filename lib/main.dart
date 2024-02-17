@@ -1,4 +1,3 @@
-
 import 'dart:html';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -12,7 +11,6 @@ import 'package:payment_tool/cuadraditosLanding.dart';
 import 'package:payment_tool/initialLanding.dart';
 import 'firebase_options.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'dart:html' as html show window;
 
 GoogleSignIn googleSignIn = GoogleSignIn(
   clientId: ApiKeys.GoogleAuthSignIn,
@@ -27,13 +25,11 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  const useHashUrlStrategy = bool.fromEnvironment('ENABLE_HASH_URL_STRATEGY', defaultValue: false);
+  const useHashUrlStrategy =
+      bool.fromEnvironment('ENABLE_HASH_URL_STRATEGY', defaultValue: false);
   if (!useHashUrlStrategy) {
     setUrlStrategy(const HashUrlStrategy());
   }
-
-
-  html.window.location.reload();
 
   runApp(const MyApp());
 }
