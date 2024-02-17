@@ -38,11 +38,10 @@ jobs:
 
       - name: Build 🏗️
         run: flutter build web --pwa-strategy=none
-
       - name: Copy build files to build/web directory
         run: |
-          mkdir -p build/web
-          cp -r build/**/* build/web/
+           mkdir -p build/web rsync -av --delete build/ build/web/
+      
 
       - name: Commit changes
         run: |
