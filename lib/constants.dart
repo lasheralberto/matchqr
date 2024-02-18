@@ -66,15 +66,16 @@ class PayConstants {
 
 class AppUrl {
   static String localhost = 'http://localhost:59815';
-  static String AzureBaseUrl = 'https://doogiapp.azurewebsites.net/';
+  //static String AzureBaseUrl = 'https://doogiapp.azurewebsites.net/';
+  static String AzureBaseUrl = 'https://gcloudmatchqr-bbwapl73qa-nw.a.run.app/';
   static String xUrl = 'https://twitter.com/MatchQr';
- 
 }
 
 // La solución inteligente para tu club de pádel.
 class LoginConstants {
-  static String landingSlogan = "Facilita los pagos, fortalece tu gestión.";
-  static String emailBox = 'E.mail';
+  static String landingSlogan =
+      "Facilita los pagos, fortalece la gestión en tu club.";
+  static String emailBox = 'Email';
   static String passRecover = 'Recuperación de contraseña';
   static String passwordBox = 'Contraseña';
   static String confirmPass = 'Confirmar contraseña';

@@ -540,15 +540,21 @@ void showInfoMatchesPopUp(
                                                     .border, // Esquinas redondeadas
                                               ),
                                               tileColor: AppColors.tileColor,
-                                              title: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
+                                              title: Wrap(
+                                                alignment:
+                                                    WrapAlignment.spaceBetween,
+                                                //mainAxisAlignment:
+                                                //    MainAxisAlignment.start,
                                                 children: [
-                                                  Text(
-                                                    transaction['session_data']
-                                                            ['customer_details']
-                                                        ['name'],
-                                                    overflow: TextOverflow.fade,
+                                                  Expanded(
+                                                    child: Text(
+                                                      transaction['session_data']
+                                                              [
+                                                              'customer_details']
+                                                          ['name'],
+                                                      maxLines:
+                                                          1, // Limita el texto a una sola línea
+                                                    ),
                                                   ),
                                                   const Spacer(),
                                                   screenSize.width > 1000
@@ -599,31 +605,40 @@ void showInfoMatchesPopUp(
                                                       : const SizedBox.shrink()
                                                 ],
                                               ),
-                                              subtitle: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
+                                              subtitle: Wrap(
+                                                // mainAxisAlignment:
+                                                // MainAxisAlignment.start,
                                                 children: [
-                                                  Text(
-                                                    (transaction['session_data']
-                                                                [
-                                                                'amount_total'] /
-                                                            100)
-                                                        .toStringAsFixed(2),
-                                                    overflow: TextOverflow.fade,
+                                                  Expanded(
+                                                    child: Text(
+                                                      (transaction['session_data']
+                                                                  [
+                                                                  'amount_total'] /
+                                                              100)
+                                                          .toStringAsFixed(2),
+                                                      overflow:
+                                                          TextOverflow.fade,
+                                                    ),
                                                   ),
-                                                  Text(
-                                                    getCurrencySymbol(
-                                                        transaction[
-                                                                'session_data']
-                                                            ['currency']),
-                                                    overflow: TextOverflow.fade,
+                                                  Expanded(
+                                                    child: Text(
+                                                      getCurrencySymbol(
+                                                          transaction[
+                                                                  'session_data']
+                                                              ['currency']),
+                                                      overflow:
+                                                          TextOverflow.fade,
+                                                    ),
                                                   ),
                                                   const SizedBox(
                                                     width: 15,
                                                   ),
-                                                  Text(
-                                                    datetime.toString(),
-                                                    overflow: TextOverflow.fade,
+                                                  Expanded(
+                                                    child: Text(
+                                                      datetime.toString(),
+                                                      overflow:
+                                                          TextOverflow.fade,
+                                                    ),
                                                   )
                                                 ],
                                               ),

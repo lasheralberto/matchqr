@@ -194,8 +194,8 @@ class _LoginWidgetState extends State<LoginWidget> {
   Widget buildFooter() {
     return Column(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+        Wrap(
+          //mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TextButton(
               onPressed: () {

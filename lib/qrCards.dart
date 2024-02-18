@@ -53,7 +53,7 @@ class _QRCardsState extends State<QRCards> {
                   style: ElevatedButton.styleFrom(
                       shape: const CircleBorder(),
                       padding: const EdgeInsets.all(24),
-                      backgroundColor: AppColors.IconColor,
+                      backgroundColor: AppColors.IconColor2,
                       foregroundColor: AppColors.IconColor),
                   onPressed: () {
                     //se actualiza el campo groupFilterSelected
@@ -62,7 +62,7 @@ class _QRCardsState extends State<QRCards> {
                   child: Icon(Icons.filter_alt_rounded,
                       weight: 40.0,
                       color: ColorConstants.colorButtons,
-                      size: 20),
+                      size: 15),
                 ),
               ),
             ),
@@ -80,13 +80,13 @@ class _QRCardsState extends State<QRCards> {
                   style: ElevatedButton.styleFrom(
                       shape: const CircleBorder(),
                       padding: const EdgeInsets.all(24),
-                      backgroundColor: AppColors.IconColor),
+                      backgroundColor: AppColors.IconColor2),
                   onPressed: () async {
                     await deleteUsersWithEmail(
                         context, widget.mail, groupFilterSelected.toString());
                   },
                   child: const Icon(Icons.delete,
-                      weight: 40.0, color: Colors.white, size: 20),
+                      weight: 40.0, color: Colors.white, size: 15),
                 ),
               ),
             ),
@@ -104,7 +104,7 @@ class _QRCardsState extends State<QRCards> {
                   style: ElevatedButton.styleFrom(
                       shape: const CircleBorder(),
                       padding: const EdgeInsets.all(24),
-                      backgroundColor: AppColors.IconColor),
+                      backgroundColor: AppColors.IconColor2),
                   onPressed: () async {
                     setState(
                       () => isLoadingDownloadQR = true,
@@ -123,7 +123,7 @@ class _QRCardsState extends State<QRCards> {
                         Icons.download,
                         weight: 40.0,
                         color: ColorConstants.colorButtons,
-                        size: 20,
+                        size: 15,
                       ),
                       if (isLoadingDownloadQR)
                         const CircularProgressIndicator(
@@ -166,7 +166,7 @@ class _QRCardsState extends State<QRCards> {
                     var gridParams = calculateGridParameters(context, constr);
 
                     return SizedBox(
-                      height: MediaQuery.of(context).size.height / 1.3,
+                      height: MediaQuery.of(context).size.height / 1.5,
                       width: gridParams.width,
                       child: GridView.builder(
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -198,68 +198,64 @@ class _QRCardsState extends State<QRCards> {
                               borderRadius: StyleConstants.border,
                             ),
                             elevation: 1.1,
-                            child: SingleChildScrollView(
-                              child: Column(
-                                children: [
-                                  Align(
-                                    alignment: Alignment.topRight,
-                                    child: IconButton(
-                                        onPressed: () {
-                                          _modificarGrupo(idDoc, group);
-                                        },
-                                        icon: const Icon(
-                                          Icons.add_to_photos_sharp,
-                                          size: 15,
-                                          color: AppColors.IconColor,
-                                        )),
-                                  ),
-                                  Text(prodName,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.w600)),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  Center(
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        _showQRpopup(
-                                            prodName,
-                                            payLinkUrl,
-                                            prodName,
-                                            prodDesc,
-                                            group,
-                                            eyeShape,
-                                            colorConv,
-                                            formattedDate,
-                                            idDoc);
+                            child: Column(
+                              children: [
+                                Align(
+                                  alignment: Alignment.topRight,
+                                  child: IconButton(
+                                      onPressed: () {
+                                        _modificarGrupo(idDoc, group);
                                       },
-                                      child: QrImageView(
-                                        size: 200.0,
-                                        data: payLinkUrl,
-                                        embeddedImageStyle:
-                                            QrEmbeddedImageStyle(
-                                                size:
-                                                    StyleConstants.logoQrSize),
-                                        embeddedImage: AssetImage(
-                                            AssetsImages.tennisLogoBall),
-                                        dataModuleStyle: QrDataModuleStyle(
-                                          dataModuleShape:
-                                              QrDataModuleShape.square,
-                                          color: colorConv,
-                                        ),
-                                        eyeStyle: QrEyeStyle(
-                                          eyeShape: eyeShape,
-                                          color: colorConv,
-                                        ),
+                                      icon: const Icon(
+                                        Icons.add_to_photos_sharp,
+                                        size: 15,
+                                        color: AppColors.IconColor,
+                                      )),
+                                ),
+                                Text(prodName,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.w600)),
+                                const SizedBox(
+                                  height: 5,
+                                ),
+                                Center(
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      _showQRpopup(
+                                          prodName,
+                                          payLinkUrl,
+                                          prodName,
+                                          prodDesc,
+                                          group,
+                                          eyeShape,
+                                          colorConv,
+                                          formattedDate,
+                                          idDoc);
+                                    },
+                                    child: QrImageView(
+                                      size: 200.0,
+                                      data: payLinkUrl,
+                                      embeddedImageStyle: QrEmbeddedImageStyle(
+                                          size: StyleConstants.logoQrSize),
+                                      embeddedImage: AssetImage(
+                                          AssetsImages.tennisLogoBall),
+                                      dataModuleStyle: QrDataModuleStyle(
+                                        dataModuleShape:
+                                            QrDataModuleShape.square,
+                                        color: colorConv,
+                                      ),
+                                      eyeStyle: QrEyeStyle(
+                                        eyeShape: eyeShape,
+                                        color: colorConv,
                                       ),
                                     ),
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(group),
-                                  )
-                                ],
-                              ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(group),
+                                )
+                              ],
                             ),
                           );
                         },
@@ -623,8 +619,8 @@ GridParameters calculateGridParameters(
   // Calculate dynamicWidth
   var maxBreakpoint = screenWidth / 2;
   var widthFactor = screenWidth < maxBreakpoint
-      ? 0.5 + (maxBreakpoint - screenWidth) / screenWidth
-      : 0.5;
+      ? 0.7 + (maxBreakpoint - screenWidth) / screenWidth
+      : 0.6;
   var dynamicWidth = math.min(screenWidth * widthFactor, constr.maxWidth);
 
   // Calculate crossAxisCount

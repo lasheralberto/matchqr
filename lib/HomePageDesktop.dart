@@ -126,64 +126,27 @@ class _MyHomePageDesktopState extends State<MyHomePageDesktop>
                     child: screenSizeW < StyleConstants.mobileSize
                         ? Wrap(
                             children: [
-                              screenSizeW > StyleConstants.mobileSize
-                                  ? Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            _estaDescargando
-                                                ? const CircularProgressIndicator()
-                                                : InkWell(
-                                                    child: const Icon(
-                                                        Icons
-                                                            .downloading_rounded,
-                                                        weight: 20.0,
-                                                        color: AppColors
-                                                            .IconColor),
-                                                    onTap: () async {
-                                                      setState(() {
-                                                        _estaDescargando = true;
-                                                      });
-                                                      await filtrarYDescargarCSV(
-                                                          dataPaymentsDataForCsv,
-                                                          selectedDate);
-
-                                                      setState(() {
-                                                        _estaDescargando =
-                                                            false;
-                                                      });
-                                                    },
-                                                  ),
-                                            DateSelector(
-                                              initialDate: DateTime.now(),
-                                              onDateSelected: (p0) {
-                                                setState(() {
-                                                  selectedDate = p0;
-                                                });
-                                              },
-                                            ),
-                                          ],
-                                        ),
-                                        QRGroupsView(
-                                          userEmail: widget.email,
-                                          onGroupSelected: (group) {
-                                            setState(() {
-                                              groupSelected = group;
-                                            });
-                                          },
-                                        ),
-                                        QRLatestTransView(
-                                            userEmail: widget.email,
-                                            group: groupSelected.toString())
-                                      ],
-                                    )
-                                  : const SizedBox.shrink(),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      DateSelector(
+                                        initialDate: DateTime.now(),
+                                        onDateSelected: (p0) {
+                                          setState(() {
+                                            selectedDate = p0;
+                                          });
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                               const SizedBox(
                                 width: 10,
                               ),
