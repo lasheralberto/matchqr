@@ -13,13 +13,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: Update Dart SDK
+        run: dart pub global activate dart-sdk
+
+      - name: Update Flutter SDK
+        run: flutter upgrade
+
       - name: Delete web folder
         run: rm -rf web
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.3.1'
+          flutter-version: '2.10.0'
 
       - name: Create web project
         run: flutter create . --platforms web
@@ -33,3 +39,4 @@ jobs:
           deploy_key: ${{ secrets.DEPLOY_KEY }}
           publish_dir: ./build/web
           publish_branch: gh-pages
+
