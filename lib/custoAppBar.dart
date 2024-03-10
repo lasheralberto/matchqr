@@ -41,6 +41,17 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     Future<dynamic> userPhoto = getUserPhoto();
 
     return AppBar(
+      title: Align(
+        alignment: Alignment.center,
+        child: SizedBox(
+          height: 70, // Ajusta la altura de acuerdo a tu logo
+          child: Image.asset(
+            AssetsImages.tennisLogoBall, // URL de tu imagen de logo
+            fit: BoxFit
+                .cover, // Ajusta el ajuste de la imagen según sea necesario
+          ),
+        ),
+      ),
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
               bottomLeft: Radius.circular(25.0),
@@ -49,7 +60,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         IconButton(
             onPressed: () async {
               await launchUrl(
-                  Uri.parse('https://www.matchqr.es/userguide.html'));
+                  Uri.parse('https://www.matchqr.es/userguide.pdf'));
             },
             icon: const Icon(
               Icons.help_outlined,
@@ -116,7 +127,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       elevation: 20.0, // Remove the app bar shadow
       backgroundColor:
           ColorConstants.colorAppBar, // Set the background color to blue
-      title: hasTitle ? Text(title) : null, // Remove the title
+      //title: hasTitle ? Text(title) : null, // Remove the title
       // leading: Center(
       //   child: Container(
       //     height: 80,

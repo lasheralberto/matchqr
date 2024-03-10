@@ -14,8 +14,11 @@ class AppColors {
   static const Color tileColor = Colors.white70;
   static const Color backgroundCard = Colors.white;
   static const Color buttonColor = Colors.white70;
-  static const Color IconColor = Color.fromARGB(220, 75, 111, 230);
-  static const Color IconColor2 = Color.fromARGB(220, 177, 240, 62);
+  //static const Color IconColor = Color.fromARGB(220, 58, 84, 170);
+  static const Color IconColor = Color.fromRGBO(62, 90, 131, 1);
+
+  static const Color IconColor2 = Color.fromARGB(212, 128, 180, 32);
+  static const Color IconColor3 = Colors.white60;
 }
 
 class ColorConstants {
@@ -31,7 +34,7 @@ class AssetsImages {
   static String noDataQrBackground = '/images/ops.png';
   static String noDataQrAdmin = '/images/bored.png';
   static String tennisLogoBall =
-      'images/landing_images/matchqrLogo.png'; //'images/tenis2.png';
+      'images/landing_images/matchqrLogo.png'; //'images/tenis2png';
   static String AppBarInkWizLogo = '/images/s2.png';
   static String GoogleSignInLogo = "/images/g_logo.png";
   static String BookGifLandingPage =
@@ -46,13 +49,14 @@ class AssetsImages {
 
 class ApiKeys {
   static String GoogleAuthSignIn =
-      '824902523000-220rkjn19j20un2f1ss2r389u9so6m8j.apps.googleusercontent.com';
+      '842301100243-r9d50cu79c8rali5gd0t34kq2ok8064b.apps.googleusercontent.com';
+  //'824902523000-220rkjn19j20un2f1ss2r389u9so6m8j.apps.googleusercontent.com';
 }
 
 class StyleConstants {
   static BorderRadius border = BorderRadius.circular(10.0);
   static int mobileSize = 1372;
-  static double elevation = 20.0;
+  static double elevation = 40.0;
   static Size logoQrSize = Size(45, 45);
 }
 
@@ -67,14 +71,20 @@ class PayConstants {
 class AppUrl {
   static String localhost = 'http://localhost:59815';
   //static String AzureBaseUrl = 'https://doogiapp.azurewebsites.net/';
-  static String AzureBaseUrl = 'https://gcloudmatchqr-bbwapl73qa-nw.a.run.app/';
+  static String AzureBaseUrl =
+      'https://gcloudmatchqr2-avdggb7tiq-nw.a.run.app/';
   static String xUrl = 'https://twitter.com/MatchQr';
+  static String userguideEndpoint = 'https://www.matchqr.es/userguide.pdf';
 }
 
 // La solución inteligente para tu club de pádel.
 class LoginConstants {
+  static String matchQrCopyright = '© 2024 MatchQR';
+  static String contact = 'Contacto';
+  static String termesAndConditionsText = 'Términos y Condiciones';
+  static String privacyPolicyText = 'Política de Privacidad';
   static String landingSlogan =
-      "Facilita los pagos, fortalece la gestión en tu club.";
+      "Automatiza la gestión de pagos en tu club: pagos QR, control en tiempo real.";
   static String emailBox = 'Email';
   static String passRecover = 'Recuperación de contraseña';
   static String passwordBox = 'Contraseña';
@@ -84,7 +94,7 @@ class LoginConstants {
   static String logInBox = 'Iniciar sesión';
   static String logOut = 'Cerrar sesión';
   static String recoverPassBox = 'Recuperar contraseña';
-  static String loginGoogleBox = 'Iniciar sesión con Google';
+  static String loginGoogleBox = 'Continuar con Google';
   static String enterSomeText = 'El campo está vacío';
   static String registerMe = 'Registrarme';
   static String send = 'Enviar';

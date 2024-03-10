@@ -11,17 +11,11 @@ import 'pagos_text_fields.dart';
 
 class SlidingPanelQR extends StatefulWidget {
   var email;
-  var prodNameController;
-  var prodDescControlller;
-  var groupController;
 
-  SlidingPanelQR(
-      {Key? key,
-      required this.email,
-      required this.prodNameController,
-      required this.prodDescControlller,
-      required this.groupController})
-      : super(key: key);
+  SlidingPanelQR({
+    Key? key,
+    required this.email,
+  }) : super(key: key);
 
   @override
   State<SlidingPanelQR> createState() => _SlidingPanelQRState();
@@ -34,6 +28,9 @@ class _SlidingPanelQRState extends State<SlidingPanelQR> {
   Color mycolor = Colors.black;
   String? accountOnboardUrl;
   bool _qrLoading = false;
+  TextEditingController prodNameController = TextEditingController();
+  TextEditingController prodDescController = TextEditingController();
+  TextEditingController groupController = TextEditingController();
 
   dynamic addDataStyleQR() async {
     setState(() {
@@ -53,8 +50,7 @@ class _SlidingPanelQRState extends State<SlidingPanelQR> {
 
   Future<bool> createQRpayment() async {
     // Verificar los campos comunes primero
-    if (widget.prodNameController.text.isEmpty ||
-        widget.prodDescControlller.text.isEmpty) {
+    if (prodNameController.text.isEmpty || prodDescController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Debes cumplimentar todos los campos')),
       );
@@ -102,7 +98,7 @@ class _SlidingPanelQRState extends State<SlidingPanelQR> {
     // If onboarding is complete, create a payment link
     if (isOnboarded == true) {
       var paylink = await createPayLink(
-        widget.prodNameController.text,
+        prodNameController.text,
         accountStripe['account']['id'],
       );
 
@@ -111,12 +107,12 @@ class _SlidingPanelQRState extends State<SlidingPanelQR> {
           pay_link: paylink['checkOutObject']['url'],
           acc_id: paylink['checkOutObject']['id'],
           acc_dest_info: paylink['acc_info_dest'],
-          prod_name: widget.prodNameController.text,
-          prod_desc: widget.prodDescControlller.text,
+          prod_name: prodNameController.text,
+          prod_desc: prodDescController.text,
           price: "",
           typeOfInsert: 'stripeConnect',
           qrStyle: qrStyle,
-          group: widget.groupController.text);
+          group: groupController.text);
 
       return true;
     } else {
@@ -250,109 +246,101 @@ class _SlidingPanelQRState extends State<SlidingPanelQR> {
                 children: [
                   SizedBox(
                     width: 600,
-                    child: Card(
-                      margin: const EdgeInsets.all(40),
-                      color: ColorConstants.colorCard,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: StyleConstants
-                            .border, // Adjust the radius as needed
-                      ),
-                      elevation: 30.0, // Add elevation for a card-like effect
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          children: [
-                            //////////////////////////buttons for editing QR and mass generation
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                FittedBox(
-                                  fit: BoxFit.scaleDown,
-                                  child: Row(
-                                    children: [
-                                      const Text('Con tecnología de pagos de'),
-                                      Image.asset(
-                                        AssetsImages.stripeLogo,
-                                        height: 70,
-                                        width: 100,
-                                      )
-                                    ],
+                    child: Center(
+                      child: Card(
+                        margin: const EdgeInsets.all(40),
+                        color: ColorConstants.colorCard,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: StyleConstants.border,
+                        ),
+                        elevation: 30.0,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            children: [
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    child: Row(
+                                      children: [
+                                        const Text('Con tecnología de pagos de'),
+                                        Image.asset(
+                                          AssetsImages.stripeLogo,
+                                          height: 70,
+                                          width: 100,
+                                        )
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                ElevatedButton.icon(
-                                  label: Text(
-                                    TextFieldsTexts.personalizarQR,
-                                    style: TextStyle(
+                                  ElevatedButton.icon(
+                                    label: Text(
+                                      TextFieldsTexts.personalizarQR,
+                                      style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
-                                        fontSize: FontSize.large.value),
+                                        fontSize: FontSize.large.value,
+                                      ),
+                                    ),
+                                    style: ElevatedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: StyleConstants.border,
+                                      ),
+                                      backgroundColor: AppColors.IconColor,
+                                      padding: const EdgeInsets.all(16.0),
+                                    ),
+                                    onPressed: () => _showOptionsDialog(context),
+                                    icon: const Icon(
+                                      Icons.style_outlined,
+                                      color: Colors.white,
+                                    ),
                                   ),
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+                              PagosTextFields(
+                                email: widget.email,
+                                prodNameController: prodNameController,
+                                prodDescController: prodDescController,
+                                groupController: groupController,
+                              ),
+                              const SizedBox(height: 10),
+                              SizedBox(
+                                width: 200,
+                                child: ElevatedButton.icon(
                                   style: ElevatedButton.styleFrom(
                                     shape: RoundedRectangleBorder(
-                                        borderRadius: StyleConstants.border),
-                                    backgroundColor: AppColors.IconColor,
+                                      borderRadius: StyleConstants.border,
+                                    ),
                                     padding: const EdgeInsets.all(16.0),
+                                    backgroundColor: AppColors.IconColor,
                                   ),
-                                  onPressed: () => _showOptionsDialog(context),
-                                  icon: const Icon(
-                                    Icons.style_outlined,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            //////////////////////////buttons for editing QR and mass generation
-
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            PagosTextFields(
-                              email: widget.email,
-                              prodNameController: widget.prodNameController,
-                              prodDescController: widget.prodDescControlller,
-                              groupController: widget.groupController,
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            SizedBox(
-                              width: 200,
-                              child: ElevatedButton.icon(
-                                  style: ElevatedButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius: StyleConstants.border),
-                                      padding: const EdgeInsets.all(16.0),
-                                      backgroundColor: AppColors.IconColor),
                                   onPressed: () async {
-                                    addDataStyleQR();
-
                                     setState(() {
                                       _qrLoading = true;
                                     });
-
+                      
                                     var _isQrCreated = await createQRpayment();
-
+                      
                                     setState(() {
-                                      _qrLoading =
-                                          _isQrCreated == true ? false : true;
+                                      _qrLoading = !_isQrCreated;
                                     });
-
-                                    //si el usuario ha terminado el formulario --> True
                                   },
                                   label: Text(
                                     TextFieldsTexts.generarQR,
                                     style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                        fontSize: FontSize.large.value),
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                      fontSize: FontSize.large.value,
+                                    ),
                                   ),
-                                  icon: _qrLoading == true
+                                  icon: _qrLoading
                                       ? Container(
                                           width: 24,
                                           height: 24,
                                           padding: const EdgeInsets.all(2.0),
-                                          child:
-                                              const CircularProgressIndicator(
+                                          child: const CircularProgressIndicator(
                                             color: Colors.white,
                                             strokeWidth: 3,
                                           ),
@@ -360,9 +348,11 @@ class _SlidingPanelQRState extends State<SlidingPanelQR> {
                                       : const Icon(
                                           Icons.qr_code_rounded,
                                           color: Colors.white,
-                                        )),
-                            ),
-                          ],
+                                        ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -374,5 +364,21 @@ class _SlidingPanelQRState extends State<SlidingPanelQR> {
         ),
       ),
     );
+  }
+
+  void clearControllers() {
+    prodDescController.clear();
+    prodNameController.clear();
+
+    groupController.clear();
+  }
+
+  @override
+  void dispose() {
+    prodDescController.dispose();
+    prodNameController.dispose();
+
+    groupController.dispose();
+    super.dispose();
   }
 }

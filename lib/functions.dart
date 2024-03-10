@@ -1,15 +1,21 @@
 import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
+import 'package:chat_gpt_api/app/model/data_model/completion/completion.dart';
+import 'package:chat_gpt_api/app/model/data_model/completion/completion_request.dart';
 import 'package:excel/excel.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:payment_tool/LineChartWidgets.dart';
+import 'package:payment_tool/main.dart';
 import 'constants.dart';
 import 'dart:convert';
 import 'dart:html' as html;
+import 'dart:js' as js; // ignore: avoid_web_libraries_in_flutter
 
 Stream<List<String>> getDataGroups(String email) {
   return FirebaseFirestore.instance
@@ -341,6 +347,14 @@ void createAndTriggerDownloadLink(List<int> bytes, String fileName) {
 
   // Limpiar el objeto URL después de la descarga
   html.Url.revokeObjectUrl(url);
+}
+
+class FileSaver {
+  void saveAs(List<int> bytes, String fileName) =>
+      js.context.callMethod("saveAs", [
+        html.Blob([bytes]),
+        fileName
+      ]);
 }
 
 Future<void> addDataFirebase(
@@ -924,45 +938,42 @@ Future<void> filtrarYDescargarCSV(data, selectedDate) async {
 }
 
 List<Offset> calculateLetterPositions(String word, Size screenSize) {
-  List<Offset> positions = [];
-  final double gridSize = 8.0; // El tamaño de cada "punto" de la letra
-  final double letterSpacing = gridSize * 1.2; // Espacio entre letras
-  final double startX = (screenSize.width -
-          (word.length * (gridSize * 5) + letterSpacing * (word.length - 1))) /
-      2; // Centrar la palabra
-  final double startY =
-      (screenSize.height - (gridSize * 5)) / 1; // Centrar verticalmente
+  const double gridSize = 5.0;
+  const double letterSpacing = gridSize * 1.1;
+  final double startX = -100;
+  // final double startX = (screenSize.width -
+  //         (word.length * gridSize * 4 + (word.length - 1) * letterSpacing)) /
+  //     4;
+  final double startY = (screenSize.height - gridSize * 5) / 1;
 
-  // Mapa de las letras, cada lista representa puntos en una cuadrícula de 5x5 para la letra
-  Map<String, List<List<int>>> letters = {
+  final Map<String, List<List<int>>> letters = {
     'M': [
-      [0, 4], // Esquina inferior izquierda
+      [0, 4],
       [0, 3],
       [0, 2],
       [0, 1],
-      [0, 0], // Punto superior izquierdo
-      [1, 1], // Diagonal hacia abajo hacia la derecha
-      [2, 2], // Punto medio de la M
-      [3, 1], // Diagonal hacia abajo hacia la izquierda
-      [4, 0], // Punto superior derecho
+      [0, 0],
+      [1, 1],
+      [2, 2],
+      [3, 1],
+      [4, 0],
       [4, 1],
       [4, 2],
       [4, 3],
-      [4, 4] // Esquina inferior derecha
+      [4, 4]
     ],
     'A': [
       [2, 0],
       [1, 1],
+      [2, 1],
       [3, 1],
-      [0, 2],
-      [4, 2],
-      [0, 3],
-      [4, 3],
       [0, 2],
       [1, 2],
       [2, 2],
       [3, 2],
       [4, 2],
+      [0, 3],
+      [4, 3],
       [0, 4],
       [4, 4]
     ],
@@ -1005,13 +1016,18 @@ List<Offset> calculateLetterPositions(String word, Size screenSize) {
       [4, 4]
     ],
     'Q': [
-      [1, 0], [2, 0], [3, 0], // Parte superior del círculo
-      [0, 1], [4, 1], // Lados del círculo
-      [0, 2], [4, 2], // Lados del círculo
-      [0, 3], // Lado izquierdo del círculo
-      [1, 4], [2, 4], // Parte inferior del círculo
-      [3, 3], // Lado derecho del círculo y parte superior del palito
-      [4, 4] // Extremo del palito
+      [1, 0],
+      [2, 0],
+      [3, 0],
+      [0, 1],
+      [4, 1],
+      [0, 2],
+      [4, 2],
+      [0, 3],
+      [1, 4],
+      [2, 4],
+      [3, 3],
+      [4, 4]
     ],
     'R': [
       [0, 0],
@@ -1030,18 +1046,129 @@ List<Offset> calculateLetterPositions(String word, Size screenSize) {
     // Agrega las definiciones de las letras que necesites
   };
 
+  final List<Offset> positions = [];
   double currentX = startX;
-  for (int i = 0; i < word.length; i++) {
-    String char = word[i];
-    if (letters.containsKey(char)) {
-      for (var point in letters[char]!) {
-        double x = currentX + point[0] * gridSize;
-        double y = startY + point[1] * gridSize;
+
+  for (final char in word.split('')) {
+    final letter = letters[char];
+    if (letter != null) {
+      for (final point in letter) {
+        final x = currentX + point[0] * gridSize;
+        final y = startY + point[1] * gridSize;
         positions.add(Offset(x, y));
       }
     }
-    currentX += gridSize * 5 + letterSpacing; // Ajustar para la siguiente letra
+    currentX += gridSize * 5 + letterSpacing;
   }
 
   return positions;
+}
+
+Future<String?> textCompletion(textInput) async {
+  String inputPrompt =
+      // ignore: prefer_interpolation_to_compose_strings
+      'Dame la información más relevante sobre este historial de pagos en el contexto de un club de tenis. Muestra las estadísticas más importantes:' +
+          textInput;
+  Completion? completion = await chatGpt.textCompletion(
+    request: CompletionRequest(
+      prompt: inputPrompt,
+      maxTokens: 100,
+    ),
+  );
+
+  if (kDebugMode) {
+    print(completion?.choices);
+  }
+
+  return completion?.choices!.first.text;
+}
+
+Stream<QuerySnapshot<Map<String, dynamic>>>? getFirestoreStream(
+    usermail, group, _fireStoreInstance) {
+  if (group == "null" || group == "Todos los grupos") {
+    // Si widget.group es nulo, busca los grupos disponibles en la base de datos
+    return _fireStoreInstance
+        .collection('users_paylinks')
+        .doc(usermail)
+        .collection('qrCodes')
+        .snapshots();
+  } else {
+    return _fireStoreInstance
+        .collection('users_paylinks')
+        .doc(usermail)
+        .collection('qrCodes')
+        .where('group', isEqualTo: group)
+        .snapshots();
+  }
+}
+
+List<Widget> cardPageView(BuildContext context, email) {
+  return [
+    LineChartTotalFact(
+      datastream: getFirestoreStream(
+          email, "Todos los grupos", FirebaseFirestore.instance),
+      lastNRegistros: 150,
+    ),
+    TextSummayCard(
+      datastream: getFirestoreStream(
+          email, "Todos los grupos", FirebaseFirestore.instance),
+    ),
+    LineChartCount(
+      datastream: getFirestoreStream(
+          email, "Todos los grupos", FirebaseFirestore.instance),
+      lastNRegistros: 150,
+    ),
+  ];
+}
+
+Map<String, dynamic> getTotalFacturacionPorDia(
+    List<dynamic> paymentHistoryDocuments) {
+  Map<String, double> totalPorDia = {};
+  Map<String, int> totalDePagosEnFecha = {'NumberOfPayments': 0};
+  Map<String, int> currentDaysOfMonth = {'DaysOfMonth': 0};
+
+  for (var document in paymentHistoryDocuments) {
+    Map<String, dynamic> payment = document.data() as Map<String, dynamic>;
+    if (payment.containsKey('payment_history') &&
+ 
+        payment['payment_history'] != null) {
+      
+
+     
+
+      var paymentHistoryList = payment['payment_history'] as List<dynamic>;
+      for (var paymentDetail in paymentHistoryList) {
+        Map<String, dynamic> sessionData =
+            paymentDetail['session_data'] as Map<String, dynamic>;
+        if (sessionData.containsKey('created') &&
+            sessionData.containsKey('amount_total') &&
+            sessionData['isRefunded'] == false) {
+          DateTime createdDate = DateTime.fromMillisecondsSinceEpoch(
+              sessionData['created'] * 1000);
+          DateTime currentDate = DateTime.now();
+          if (createdDate.year == currentDate.year &&
+              createdDate.month == currentDate.month) {
+            double amount = sessionData['amount_total'] / 100 as double;
+
+            currentDaysOfMonth.update('DaysOfMonth', (value) => value + 1);
+
+            totalDePagosEnFecha.update(
+                'NumberOfPayments', (value) => value + 1);
+
+            totalPorDia.update(
+              'Valor',
+              (existingAmount) => existingAmount + amount,
+              ifAbsent: () => amount,
+            );
+          }
+        }
+      }
+    }
+  }
+
+  return {
+    'totalPorDia': totalPorDia,
+    'totalDePagosEnFecha': totalDePagosEnFecha,
+    'Days': currentDaysOfMonth
+  };
 }

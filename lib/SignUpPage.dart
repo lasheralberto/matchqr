@@ -41,6 +41,8 @@ class _SignUpPopUpState extends State<SignUpPopUp> {
       ))
               .user;
 
+      await user!.sendEmailVerification();
+
       FirebaseFirestore.instance.collection('users').doc().set({
         'name': user!.displayName,
         'uid': user.uid,
@@ -304,7 +306,7 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
             ? const CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
               )
-            : OutlinedButton(
+            : ElevatedButton(
                 style: ButtonStyle(
                   elevation: MaterialStateProperty.all(10.0),
                   backgroundColor: MaterialStateProperty.all(Colors.white),

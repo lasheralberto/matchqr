@@ -40,7 +40,7 @@ dependencies:
   progress_state_button: ^1.0.4
   js: ^0.6.7
   liquid_swipe: ^3.1.0
-  dio: ^5.3.3
+  dio: ^4.0.6
   flutter_onboarding_slider: ^1.0.10
   flutter_credit_card: ^4.0.1
   multi_dropdown: ^2.1.0
@@ -82,7 +82,9 @@ dependencies:
   fade_out_particle: ^1.2.1
   flame: ^1.14.0
   loading_indicator: ^3.1.1
-
+  carousel_slider: ^4.2.1
+  chat_gpt_api: ^2.0.0
+  flutter_hooks: ^0.20.5
 
 dev_dependencies:
   flutter_test:

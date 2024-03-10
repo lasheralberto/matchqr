@@ -277,7 +277,7 @@ class _DateSelectorState extends State<DateSelector> {
         onTap: () => _selectDate(context),
         child: Card(
           color: AppColors.IconColor2,
-          elevation: 10,
+          //elevation: StyleConstants.elevation,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),

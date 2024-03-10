@@ -25,23 +25,6 @@ class _TimeSlotSelectionCardState extends State<TimeSlotSelectionCard> {
   List<Pista> pistas = [];
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Stream<QuerySnapshot<Map<String, dynamic>>>? _getFirestoreStream() {
-    if (widget.group == "null" || widget.group == 'Todos los grupos') {
-      return _firestore
-          .collection('users_paylinks')
-          .doc(widget.email)
-          .collection('qrCodes')
-          .snapshots();
-    } else {
-      return _firestore
-          .collection('users_paylinks')
-          .doc(widget.email)
-          .collection('qrCodes')
-          .where('group', isEqualTo: widget.group)
-          .snapshots();
-    }
-  }
-
   @override
   void initState() {
     // TODO: implement initState
@@ -54,14 +37,14 @@ class _TimeSlotSelectionCardState extends State<TimeSlotSelectionCard> {
       child: Column(
         children: [
           const SizedBox(
-            height: 5,
+            height: 55,
           ),
           const Text(
             'Horarios y precios',
             style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
           ),
           StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-            stream: _getFirestoreStream(),
+            stream: getFirestoreStream(widget.email, widget.group, _firestore),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(
@@ -133,14 +116,14 @@ class _TimeSlotSelectionCardState extends State<TimeSlotSelectionCard> {
                 return Center(
                   child: SizedBox(
                     width: MediaQuery.of(context).size.width * 0.2,
-                    height: MediaQuery.of(context).size.height * 0.9,
+                    height: MediaQuery.of(context).size.height * 0.83,
                     child: Card(
                       shape: RoundedRectangleBorder(
                           borderRadius:
                               StyleConstants.border // Esquinas redondeadas
                           ),
-                      color: AppColors.IconColor,
-                      elevation: 4.0,
+                      color: AppColors.IconColor3,
+                      // elevation: 4.0,
                       margin: const EdgeInsets.all(16.0),
                       child: SingleChildScrollView(
                         child: Column(

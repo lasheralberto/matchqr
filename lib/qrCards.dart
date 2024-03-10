@@ -9,6 +9,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
+import 'package:payment_tool/SlidingPanelCrearQr.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 
@@ -96,45 +97,69 @@ class _QRCardsState extends State<QRCards> {
           ),
           Align(
             alignment: Alignment.topLeft,
-            child: Tooltip(
-              message: 'Descargar todos los QR',
-              child: Padding(
-                padding: const EdgeInsets.only(top: 20.0, right: 20.0),
+            child: Padding(
+              padding: const EdgeInsets.only(top: 20.0, right: 20.0),
+              child: Tooltip(
+                message: 'Generar QR',
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                       shape: const CircleBorder(),
                       padding: const EdgeInsets.all(24),
-                      backgroundColor: AppColors.IconColor2),
-                  onPressed: () async {
-                    setState(
-                      () => isLoadingDownloadQR = true,
-                    );
-                    await downloadAllQR(
-                        widget.mail, groupFilterSelected.toString());
-
-                    setState(
-                      () => isLoadingDownloadQR = false,
-                    );
+                      backgroundColor: Colors.amber,
+                      foregroundColor: AppColors.IconColor),
+                  onPressed: () {
+                    //se actualiza el campo groupFilterSelected
+                    _showCreateQR(widget.mail);
                   },
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Icon(
-                        Icons.download,
-                        weight: 40.0,
-                        color: ColorConstants.colorButtons,
-                        size: 15,
-                      ),
-                      if (isLoadingDownloadQR)
-                        const CircularProgressIndicator(
-                          color: Colors.white,
-                        ),
-                    ],
-                  ),
+                  child: Icon(Icons.qr_code,
+                      weight: 40.0,
+                      color: ColorConstants.colorButtons,
+                      size: 15),
                 ),
               ),
             ),
           ),
+          // Align(
+          //   alignment: Alignment.topLeft,
+          //   child: Tooltip(
+          //     message: 'Descargar todos los QR',
+          //     child: Padding(
+          //       padding: const EdgeInsets.only(top: 20.0, right: 20.0),
+          //       child: ElevatedButton(
+          //         style: ElevatedButton.styleFrom(
+          //             shape: const CircleBorder(),
+          //             padding: const EdgeInsets.all(24),
+          //             backgroundColor: AppColors.IconColor2),
+          //         onPressed: () async {
+          //           setState(
+          //             () => isLoadingDownloadQR = true,
+          //           );
+          //           await downloadAllQR(
+          //               widget.mail, groupFilterSelected.toString());
+
+          //           setState(
+          //             () => isLoadingDownloadQR = false,
+          //           );
+          //         },
+          //         child: Stack(
+          //           alignment: Alignment.center,
+          //           children: [
+          //             Icon(
+          //               Icons.download,
+          //               weight: 40.0,
+          //               color: ColorConstants.colorButtons,
+          //               size: 15,
+          //             ),
+          //             if (isLoadingDownloadQR)
+          //               const CircularProgressIndicator(
+          //                 color: Colors.white,
+          //               ),
+          //           ],
+          //         ),
+          //       ),
+          //     ),
+          //   ),
+          // ),
         ],
       ),
       Container(
@@ -287,11 +312,12 @@ class _QRCardsState extends State<QRCards> {
     ]);
   }
 
-  void savePngLocally(content) {
-    const fileName = 'example.png'; // Specify the desired file name
+  void savePngLocally(content, titlePng) {
+    var fileName = '$titlePng.png'; // Specify the desired file name
 
     // Call the JavaScript function
-    js.context.callMethod('saveFile', [fileName, content]);
+    // js.context.callMethod('saveFile', [fileName, content]);
+    FileSaver().saveAs(content, fileName);
   }
 
   void saveAsFileBulk(bytes, String fileName) {
@@ -379,6 +405,18 @@ class _QRCardsState extends State<QRCards> {
     return pngBytes;
 
     // Continue to Step 3 to save the file
+  }
+
+  void _showCreateQR(email) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: SlidingPanelQR(
+              email: email,
+            ),
+          );
+        });
   }
 
   void _showFilterPopup(String userEmail) {
@@ -556,19 +594,23 @@ class _QRCardsState extends State<QRCards> {
             ),
           ),
           actions: <Widget>[
-            ElevatedButton(
-                onPressed: () async {
-                  var pngBytes = await captureAndSaveWidget();
-                  savePngLocally(pngBytes);
-                  //saveAsFile(pngBytes, '$prodName.png');
-                },
-                style: ButtonStyle(
-                    alignment: Alignment.center,
-                    backgroundColor:
-                        MaterialStateProperty.all(ColorConstants.colorButtons)),
-                child: const Icon(
-                  Icons.save_alt_outlined,
-                )),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Align(
+                alignment: Alignment.bottomRight,
+                child: IconButton(
+                  icon: const Icon(Icons.download),
+                  onPressed: () async {
+                    var pngBytes = await captureAndSaveWidget();
+                    savePngLocally(pngBytes, title);
+                    //saveAsFile(pngBytes, '$prodName.png');
+                  },
+                  style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all(AppColors.IconColor2)),
+                ),
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Align(
@@ -576,7 +618,8 @@ class _QRCardsState extends State<QRCards> {
                 child: IconButton(
                   tooltip: 'Borrar QR',
                   style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(Colors.white)),
+                      backgroundColor:
+                          MaterialStateProperty.all(Colors.redAccent)),
                   icon: const Icon(Icons.delete),
                   onPressed: () async {
                     // Lógica para borrar el documento de Firestore

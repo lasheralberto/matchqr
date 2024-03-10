@@ -11,12 +11,17 @@ import 'package:payment_tool/cuadraditosLanding.dart';
 import 'package:payment_tool/initialLanding.dart';
 import 'firebase_options.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:chat_gpt_api/chat_gpt.dart';
 
 GoogleSignIn googleSignIn = GoogleSignIn(
   clientId: ApiKeys.GoogleAuthSignIn,
 );
 GoogleAuthProvider authProviderGoogle = GoogleAuthProvider();
 FirebaseAuth authFirebase = FirebaseAuth.instance;
+
+final chatGpt = ChatGPT.builder(
+  token: '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',
+);
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -62,7 +67,17 @@ class _MyAppState extends State<MyApp> {
       builder: EasyLoading.init(),
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primaryColor: Colors.blue, // Set the primary color to blue
+        primaryColor: AppColors.IconColor, // Set the primary color to blue
+        useMaterial3: true,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.blue, // Color de fondo de la AppBar
+          elevation: 0, // Sin sombra en la AppBar
+          iconTheme: IconThemeData(
+              color: Colors.black), // Color de los iconos en la AppBar
+          titleTextStyle: TextStyle(
+              color: Colors.black), // Estilo del texto del título en la AppBar
+        ),
+
         fontFamily: 'Roboto', // Use Google's Roboto font
       ),
       //initialRoute: AppRoutes.landing,

@@ -33,222 +33,204 @@ class _LoginWidgetState extends State<LoginWidget> {
   Widget build(BuildContext context) {
     var screenSizeW = MediaQuery.of(context).size.width;
     var screenSizeH = MediaQuery.of(context).size.width;
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        Container(
-          height: screenSizeH / 10,
-          width: screenSizeW / 10,
-          decoration: BoxDecoration(
-              image:
-                  DecorationImage(image: AssetImage(AssetsImages.logoMatchQr))),
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        SizedBox(
-          width: screenSizeW / 2,
-          child: Form(
-            key: _formKey,
-            child: Padding(
-              padding: const EdgeInsets.all(38.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  TextFormField(
-                    controller: _emailController,
-                    style: const TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold),
-                    decoration: InputDecoration(
-                        labelStyle: const TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold),
-                        labelText: LoginConstants
-                            .emailBox), // Usa LoginConstants.emailBox si está disponible
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter some text'; // Usa LoginConstants.enterSomeText si está disponible
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    obscureText: true,
-                    style: const TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold),
-                    controller: _passwordController,
-                    decoration: InputDecoration(
-                        labelStyle: const TextStyle(color: Colors.white),
-                        labelText: LoginConstants
-                            .passwordBox), // Usa LoginConstants.passwordBox si está disponible
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter some text'; // Usa LoginConstants.enterSomeText si está disponible
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  Center(
-                    child: SizedBox(
-                      height: 40,
-                      width: 250,
-                      child: OutlinedButton(
-                        style: ButtonStyle(
-                          elevation: MaterialStateProperty.all(10.0),
-                          backgroundColor:
-                              MaterialStateProperty.all(AppColors.IconColor2),
-                          shape: MaterialStateProperty.all(
-                            RoundedRectangleBorder(
-                              borderRadius: StyleConstants.border,
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Align(
+            alignment: Alignment.topRight,
+            child: IconButton(
+                onPressed: () async {
+                  await launchUrl(Uri.parse(AppUrl.userguideEndpoint));
+                },
+                icon: const Icon(
+                  Icons.help_outlined,
+                  color: AppColors.IconColor2,
+                )),
+          ),
+          const SizedBox(
+            height: 80,
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              const SizedBox(
+                height: 80,
+              ),
+              Container(
+                height: screenSizeH / 12,
+                width: screenSizeW / 12,
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                        filterQuality: FilterQuality.high,
+                        image: AssetImage(AssetsImages.logoMatchQr))),
+              ),
+              const SizedBox(
+                height: 80,
+              ),
+              SizedBox(
+                width: screenSizeW / 4,
+                child: Form(
+                  key: _formKey,
+                  child: Padding(
+                    padding: const EdgeInsets.all(38.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        SizedBox(
+                          child: TextFormField(
+                            controller: _emailController,
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                            decoration: InputDecoration(
+                                labelStyle: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                                labelText: LoginConstants
+                                    .emailBox), // Usa LoginConstants.emailBox si está disponible
+                            validator: (String? value) {
+                              if (value == null || value.isEmpty) {
+                                return LoginConstants
+                                    .enterSomeText; // Usa LoginConstants.enterSomeText si está disponible
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        TextFormField(
+                          obscureText: true,
+                          style: const TextStyle(
+                              color: Colors.white, fontWeight: FontWeight.bold),
+                          controller: _passwordController,
+                          decoration: InputDecoration(
+                              labelStyle: const TextStyle(color: Colors.white),
+                              labelText: LoginConstants
+                                  .passwordBox), // Usa LoginConstants.passwordBox si está disponible
+                          validator: (String? value) {
+                            if (value == null || value.isEmpty) {
+                              return LoginConstants
+                                  .enterSomeText; // Usa LoginConstants.enterSomeText si está disponible
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                        Center(
+                          child: SizedBox(
+                            height: 40,
+                            width: 250,
+                            child: ElevatedButton(
+                              style: ButtonStyle(
+                                  elevation: MaterialStateProperty.all(5.0),
+                                  backgroundColor: MaterialStateProperty.all(
+                                      AppColors.IconColor2),
+                                  shape: MaterialStateProperty.all(
+                                      RoundedRectangleBorder(
+                                    borderRadius: StyleConstants.border,
+                                  ))),
+
+                              onPressed: () async {
+                                if (_formKey.currentState!.validate()) {
+                                  // Lógica de inicio de sesión
+                                  await _loginUser(_emailController.text,
+                                      _passwordController.text);
+                                }
+                              },
+                              child: Text(
+                                LoginConstants.logInBox,
+                                style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w400),
+                              ), // Usa LoginConstants.logInBox si está disponible
                             ),
                           ),
                         ),
-
-                        onPressed: () async {
-                          if (_formKey.currentState!.validate()) {
-                            // Lógica de inicio de sesión
-                            await _loginUser(_emailController.text,
-                                _passwordController.text);
-                          }
-                        },
-                        child: Text(
-                          LoginConstants.logInBox,
-                          style: const TextStyle(
-                              color: Colors.white, fontWeight: FontWeight.w400),
-                        ), // Usa LoginConstants.logInBox si está disponible
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Center(
-                    child: SizedBox(
-                      width: 250,
-                      child: GoogleSignInButton(
-                        iconSymbol: Image(
-                          image: AssetImage(AssetsImages.GoogleSignInLogo),
-                          height: 25.0,
+                        const SizedBox(
+                          height: 20,
                         ),
-                        buttonText: LoginConstants.loginGoogleBox,
-                        onTap: () async {
-                          await _loginUserGoogle();
-                        },
-                      ),
+                        Center(
+                          child: SizedBox(
+                            width: 250,
+                            child: GoogleSignInButton(
+                              iconSymbol: Image(
+                                image:
+                                    AssetImage(AssetsImages.GoogleSignInLogo),
+                                height: 25.0,
+                              ),
+                              buttonText: LoginConstants.loginGoogleBox,
+                              onTap: () async {
+                                await _loginUserGoogle();
+                              },
+                            ),
+                          ),
+                        ),
+                        // Button to access the app
+                        Center(
+                          child: InkWell(
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return const SignUpPopUp(); // Show the SignUpPopUp dialog
+                                },
+                              );
+                            },
+                            child: Text(
+                              LoginConstants.registerMe,
+                              style: const TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w200,
+                                  color: Colors.white),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Center(
+                          child: InkWell(
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return RecoverPassWidget(); // Show the SignUpPopUp dialog
+                                },
+                              );
+                            },
+                            child: Text(
+                              LoginConstants.recoverPassBox,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.w200,
+                                  color: Colors.white),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  // Button to access the app
-                  Center(
-                    child: InkWell(
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return const SignUpPopUp(); // Show the SignUpPopUp dialog
-                          },
-                        );
-                      },
-                      child: Text(
-                        LoginConstants.registerMe,
-                        style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w200,
-                            color: Colors.white),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Center(
-                    child: InkWell(
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return RecoverPassWidget(); // Show the SignUpPopUp dialog
-                          },
-                        );
-                      },
-                      child: Text(
-                        LoginConstants.recoverPassBox,
-                        style: const TextStyle(
-                            fontWeight: FontWeight.w200, color: Colors.white),
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
+              const SizedBox(
+                height: 10,
+              ),
+              buildFooter()
+            ],
           ),
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        buildFooter()
-      ],
+        ],
+      ),
     );
   }
 
   Widget buildFooter() {
     return Column(
       children: [
-        Wrap(
-          //mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextButton(
-              onPressed: () {
-                /* Navegar a la página de política de privacidad */
-              },
-              child: GestureDetector(
-                child: const Text('Política de Privacidad'),
-                onTap: () {
-                  showPrivacyPopUp(context, 'Política de privacidad',
-                      PrivacyConstants.privacyText);
-                },
-              ),
-            ),
-            const SizedBox(width: 10),
-            TextButton(
-              onPressed: () {
-                /* Navegar a la página de términos y condiciones */
-                showLicensePage(context: context);
-              },
-              child: const Text('Términos y Condiciones'),
-            ),
-            const SizedBox(width: 10),
-            TextButton(
-              onPressed: () {
-                showModalBottomSheet(
-                  context: context,
-                  builder: (context) {
-                    return const ContactForm();
-                  },
-                );
-              },
-              child: const Text('Contacto'),
-            ),
-          ],
-        ),
         SizedBox(
-          height: 10,
+          height: 20,
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // InkWell(
-            //   onTap: (){
-            //     launchUrl()
-            //   },
-            //   child: SizedBox(
-            //       height: 35,
-            //       width: 35,
-            //       child: Image.asset(AssetsImages.linkedinlogo)),
-            // ),
-            // SizedBox(
-            //   width: 10,
-            // ),
             InkWell(
               onTap: () {
                 launchUrl(Uri.parse(AppUrl.xUrl));
@@ -260,10 +242,66 @@ class _LoginWidgetState extends State<LoginWidget> {
             ),
           ],
         ),
+        SizedBox(
+          height: 30,
+        ),
+        Wrap(
+          //mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TextButton(
+              onPressed: () {
+                /* Navegar a la página de política de privacidad */
+              },
+              child: GestureDetector(
+                child: Text(
+                  LoginConstants.privacyPolicyText,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w100, color: AppColors.IconColor3),
+                ),
+                onTap: () {
+                  showPrivacyPopUp(context, LoginConstants.privacyPolicyText,
+                      PrivacyConstants.privacyText);
+                },
+              ),
+            ),
+            const SizedBox(width: 10),
+            TextButton(
+              onPressed: () {
+                /* Navegar a la página de términos y condiciones */
+                showLicensePage(context: context);
+              },
+              child: Text(
+                LoginConstants.termesAndConditionsText,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w100, color: AppColors.IconColor3),
+              ),
+            ),
+            const SizedBox(width: 10),
+            TextButton(
+              onPressed: () {
+                showModalBottomSheet(
+                  context: context,
+                  builder: (context) {
+                    return const ContactForm();
+                  },
+                );
+              },
+              child: Text(
+                LoginConstants.contact,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w100, color: AppColors.IconColor3),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(
+          height: 10,
+        ),
         TextButton(
           child: Text(
-            '© 2024 MatchQR',
-            style: TextStyle(fontWeight: FontWeight.w200),
+            LoginConstants.matchQrCopyright,
+            style: const TextStyle(
+                fontWeight: FontWeight.w200, color: AppColors.IconColor3),
           ),
           onPressed: () {},
         ),

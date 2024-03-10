@@ -2,10 +2,12 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:payment_tool/AnimationLogin.dart' as an;
 import 'package:payment_tool/LoginWidget.dart';
 import 'package:payment_tool/LoginWidgetMobile.dart';
 import 'package:payment_tool/functions.dart';
 import 'package:payment_tool/constants.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 
 class CuadraditosLanding extends StatefulWidget {
   const CuadraditosLanding({Key? key}) : super(key: key);
@@ -20,29 +22,23 @@ class _CuadraditosLandingState extends State<CuadraditosLanding>
   late Size screenSize;
   late List<Cuadraditos> _cuadraditosList;
   late DateTime lastUpdateTime;
-
-  // ... dentro de la clase _CuadraditosLandingState ...
-
   late AnimationController _textAnimationController;
   String _displayedText = "";
-  final String _fullText = LoginConstants.landingSlogan;
+  String _displayedTextSlogan = "";
+  String _displayedTextSlogan2 = "";
   int _textIndex = 0;
   Timer? _textTimer;
+  PageController _pageController =
+      PageController(initialPage: 0, viewportFraction: 0.5);
+  double _currentPage = 1;
+  double _currentOffset = 0;
+  int secondsForEveryText = 2;
 
-  List<Widget> cardDataList = [
-    const MyCardWidget(
-      icon: Icons.qr_code_rounded,
-      title: 'Genera QR de pago para tus pistas',
-    ),
-    const MyCardWidget(
-      icon: Icons.wallet,
-      title: 'Monitorea la facturación de tus pistas',
-    ),
-    const MyCardWidget(
-      icon: Icons.album,
-      title: 'Gestiona devoluciones con un click',
-    ),
-  ];
+  double _getCardScale(int pageIndex) {
+    // Calcula la escala en función de la distancia entre la página actual y la página seleccionada
+    double distance = (_currentPage - pageIndex).abs();
+    return 1 - (distance * 0.4);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,75 +46,62 @@ class _CuadraditosLandingState extends State<CuadraditosLanding>
     return screenSize.width > 600
         ? Scaffold(
             body: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Parte izquierda con scroll
-                Expanded(
-                  flex: 1, // Ajusta la proporción si es necesario
+                SizedBox(
+                  width: screenSize.width / 2,
                   child: SingleChildScrollView(
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Align(
-                          alignment: Alignment.centerLeft,
+                          alignment: Alignment.bottomCenter,
                           child: CustomPaint(
                             painter:
                                 CuadradoPainter(cuadrados: _cuadraditosList),
                             isComplex: true,
+                            willChange: true,
                             child: SizedBox(
                               height: screenSize.height /
-                                  2, // Ajusta según la altura de tu CustomPaint
+                                  2.2, // Ajusta según la altura de tu CustomPaint
                             ),
                           ),
-                        ),
-                        const SizedBox(
-                          height: 20,
                         ),
                         Padding(
                           padding: const EdgeInsets.all(15.0),
                           child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              _displayedText,
-                              style: const TextStyle(
-                                fontFamily: 'Roboto',
-                                fontSize: 28.0,
-                                color: Colors.blue,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
+                            alignment: Alignment.bottomCenter,
+                            child: Text(_displayedText,
+                                style: TextStyle(
+                                  fontFamily: 'Inter',
+                                  fontSize: 22.0,
+                                  color: Colors.black38,
+                                  fontWeight: FontWeight.values.last,
+                                )),
                           ),
                         ),
-
                         const SizedBox(
                           height: 20,
                         ),
-                        // Aquí puedes añadir más widgets que se desplazarán con el scroll
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Wrap(
-                            alignment: WrapAlignment.start,
-                            crossAxisAlignment: WrapCrossAlignment.start,
-                            children: cardDataList.map((cardData) {
-                              return cardData;
-                            }).toList(),
-                          ),
-                        )
                       ],
                     ),
                   ),
                 ),
                 // Parte derecha fija
-                SizedBox(
+                Container(
                   width: screenSize.width * 0.4,
+                  decoration: const BoxDecoration(
+                    color: AppColors.IconColor,
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.elliptical(30.0, 90.0),
+                        bottomLeft: Radius.elliptical(30.0, 90.0)),
+                  ),
                   child: Align(
                     alignment: Alignment.centerRight,
-                    child: Container(
-                      decoration:
-                          const BoxDecoration(color: AppColors.IconColor),
-                      child: LoginWidget(),
-                    ),
+                    child: LoginWidget(),
                   ),
                 ),
               ],
@@ -128,42 +111,52 @@ class _CuadraditosLandingState extends State<CuadraditosLanding>
             backgroundColor: AppColors.IconColor, body: LoginWidgetMobile());
   }
 
-  void _startTextAnimation(String text) {
+  Future<void> _startTextAnimation(String text, Function(String) updateText) {
     int index = 0;
-    _textTimer =
-        Timer.periodic(const Duration(milliseconds: 30), (Timer timer) {
-      if (mounted) {
-        setState(() {
-          _displayedText = text.substring(0, index);
-          if (index >= text.length)
-            timer.cancel();
-          else
-            index++;
-        });
-      } else {
-        timer.cancel();
-      }
+
+    return Future<void>.delayed(const Duration(milliseconds: 20), () {
+      Timer.periodic(const Duration(milliseconds: 20), (Timer timer) {
+        if (mounted) {
+          setState(() {
+            updateText(text.substring(0, index));
+            if (index >= text.length) {
+              timer.cancel();
+            } else {
+              index++;
+            }
+          });
+        } else {
+          timer.cancel();
+        }
+      });
     });
   }
 
   @override
   void initState() {
     super.initState();
-    screenSize =
-        const Size(400, 400); // Valor inicial, se actualizará en build.
+    screenSize = const Size(800, 400); // Tamaño inicial
+    _pageController.addListener(() {
+      setState(() {
+        _currentPage = _pageController.page!;
+      });
+    });
 
-    // Define las posiciones objetivo para formar la palabra "MATCHQR"
     final positions = calculateLetterPositions("MATCHQR", screenSize);
 
     _cuadraditosList = List.generate(
-        positions.length,
-        (index) => Cuadraditos(
-            screenSize: screenSize,
-            position: Offset(
-                Random().nextInt(screenSize.width.toInt()).toDouble(),
-                Random().nextInt(screenSize.height.toInt()).toDouble()),
-            velocity: Offset.zero));
+      positions.length,
+      (index) => Cuadraditos(
+        screenSize: screenSize,
+        position: Offset(
+          positions[index].dx, // X se mantiene constante
+          -10, // Empezar arriba de la pantalla
+        ),
+        velocity: const Offset(0, 20), // Velocidad inicial hacia abajo
+      ),
+    );
 
+    // Establecer objetivos para los cuadrados (pelotas)
     for (int i = 0; i < positions.length; i++) {
       _cuadraditosList[i].target = positions[i];
     }
@@ -172,7 +165,7 @@ class _CuadraditosLandingState extends State<CuadraditosLanding>
 
     _ticker = createTicker((elapsed) {
       final now = DateTime.now();
-      final dt = now.difference(lastUpdateTime).inMilliseconds / 700.0;
+      final dt = now.difference(lastUpdateTime).inMilliseconds / 50.0;
       lastUpdateTime = now;
 
       for (final particle in _cuadraditosList) {
@@ -183,24 +176,19 @@ class _CuadraditosLandingState extends State<CuadraditosLanding>
     _ticker.start();
 
     _textAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 300),
       vsync: this,
     );
 
     // Simulamos la finalización de la animación de los cuadraditos
     // con un Future.delayed
-    Future.delayed(const Duration(seconds: 2), () {
-      // Después de 3 segundos, comienza la animación de texto
-      _startTextAnimation(LoginConstants.landingSlogan);
+    Future.delayed(Duration(seconds: secondsForEveryText), () async {
+      // Después de 2 segundos, comienza la animación de texto
+      // Llamada a la función
+      await _startTextAnimation(LoginConstants.landingSlogan, (p0) {
+        _displayedText = p0;
+      });
     });
-  }
-
-  @override
-  void dispose() {
-    _textTimer?.cancel();
-
-    _ticker.dispose();
-    super.dispose();
   }
 }
 
@@ -208,42 +196,97 @@ class Cuadraditos {
   Offset position;
   Offset velocity;
   Offset? target;
+  bool reachedTarget = false; // Indica si el cuadrado ha alcanzado su objetivo
+  double bounceFactor = -0.9; // Factor de rebote
   var screenSize;
+  List<Offset> gridPositions = [];
 
-  Cuadraditos(
-      {required this.position,
-      required this.velocity,
-      required this.screenSize});
+  Cuadraditos({
+    required this.position,
+    required this.velocity,
+    required this.screenSize,
+  }) {
+    _generateGridPositions();
+    _shuffleGridPositions();
+  }
 
+  // Genera una cuadrícula de posiciones uniformes dentro del área objetivo
+  void _generateGridPositions() {
+    const cellSize = 30; // Tamaño de celda
+    final cols = screenSize.width ~/ cellSize;
+    final rows = screenSize.height ~/ cellSize;
+
+    for (var i = 0; i < rows; i++) {
+      for (var j = 0; j < cols; j++) {
+        final x = (j * cellSize).toDouble();
+        final y = (i * cellSize).toDouble();
+        gridPositions.add(Offset(x, y));
+      }
+    }
+  }
+
+  // Aleatoriza las posiciones dentro de la cuadrícula
+  void _shuffleGridPositions() {
+    gridPositions.shuffle();
+  }
+
+  // Método para generar la posición inicial aleatoria y converger hacia el objetivo
   void update(double dt, Size size) {
-    if (target != null) {
+    if (target != null && !reachedTarget) {
       final direction = target! - position;
       final distance = direction.distance;
 
       if (distance < 1) {
         position = target!;
+        reachedTarget = true; // Indicar que ha alcanzado el objetivo
       } else {
-        // Lerp para suavizar el movimiento
-        position = Offset.lerp(position, target!,
-            0.05)!; // Ajusta el factor de lerp según sea necesario
+        // Lógica para converger hacia el objetivo
+        position = Offset.lerp(position, target!, 0.05)!;
       }
-    } else {
-      // Movimiento normal
-      position += velocity * dt;
+    } else if (position != target && !reachedTarget) {
+      // Generar movimiento aleatorio antes de converger hacia el objetivo
+      if (gridPositions.isNotEmpty) {
+        position = gridPositions.removeAt(0);
+      }
     }
   }
 }
 
 class CuadradoPainter extends CustomPainter {
   final List<Cuadraditos> cuadrados;
-  CuadradoPainter({required this.cuadrados});
+  final Function()?
+      onTick; // Función para notificar sobre cada tick de animación
+  double t = 0.0; // Variable de tiempo para controlar la interpolación de color
+  int startTime =
+      DateTime.now().millisecondsSinceEpoch; // Tiempo de inicio de la animación
 
+  CuadradoPainter({required this.cuadrados, this.onTick}) {
+    // Inicializar el ticker para actualizar la variable de tiempo
+    Ticker((elapsed) {
+      final currentTime = DateTime.now().millisecondsSinceEpoch;
+      t = (currentTime - startTime) %
+          1000 /
+          1000; // Actualizar t cada 3 segundos
+      // Notificar a través de la función proporcionada en cada tick de animación
+      if (onTick != null) {
+        onTick!();
+      }
+    }).start();
+  }
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()..color = Colors.blue;
+    final colors = [AppColors.IconColor, AppColors.IconColor2];
 
-    for (final particle in cuadrados) {
-      canvas.drawCircle(particle.position, 3.0, paint);
+    for (int i = 0; i < cuadrados.length; i++) {
+      final particle = cuadrados[i];
+      Paint paint;
+      if (i > 57) {
+        paint = Paint()..color = Color.lerp(colors[1], colors[1], t)!;
+      } else {
+        paint = Paint()..color = Color.lerp(colors[0], colors[0], t)!;
+      }
+
+      canvas.drawCircle(particle.position, 6.5, paint);
     }
   }
 
@@ -269,7 +312,7 @@ class MyCardWidget extends StatelessWidget {
       height: 100,
       width: 220,
       child: Card(
-        color: AppColors.IconColor,
+        color: Colors.blueGrey, // Cambia el color según sea necesario
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -277,7 +320,8 @@ class MyCardWidget extends StatelessWidget {
             const SizedBox(
               width: 10,
             ),
-            Icon(icon, color: AppColors.IconColor2),
+            Icon(icon,
+                color: Colors.white), // Cambia el color según sea necesario
             const SizedBox(width: 10),
             Flexible(
               child: Padding(

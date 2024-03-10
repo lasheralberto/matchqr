@@ -132,7 +132,6 @@ class _LoginWidgetMobileState extends State<LoginWidgetMobile> {
                           ),
                         ),
                       ),
-                      // ... Aquí irían otros widgets de recuperación de contraseña, signup,etc ...
 
                       const SizedBox(
                         height: 20,
