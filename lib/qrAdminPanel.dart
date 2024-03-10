@@ -593,9 +593,9 @@ void showInfoMatchesPopUp(
                                                               'Devolver pago',
                                                           style: ElevatedButton
                                                               .styleFrom(
-                                                            primary: Colors
+                                                            backgroundColor: Colors
                                                                 .white, // Cambia el color de fondo al color blanco
-                                                            onPrimary: Colors
+                                                            foregroundColor: Colors
                                                                 .blue, // Cambia el color del texto al azul
                                                             elevation:
                                                                 2, // Añade una sombra al botón
