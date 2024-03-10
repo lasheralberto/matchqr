@@ -1,41 +1,35 @@
-name: Build and deploy
+name: Deploy to GitHub Pages
 
 on:
   push:
     branches:
       - main
 
-permissions:
-  contents: write
-  deployments: write
-
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout 🛎️
+      - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Create gh-pages branch if not exists
-        run: git checkout -B gh-pages
+      - name: Delete web folder
+        run: rm -rf web
 
-      - name: Clear gh-pages branch
-        run: |
-          git checkout gh-pages
-          git rm -r .
-          git commit -m "Clear gh-pages branch"
-          git push origin gh-pages
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '2.10.0'
+
+      - name: Create web project
+        run: flutter create . --platforms web
 
       - name: Build web
-        run: |
-          flutter pub get
-          flutter build web --pwa-strategy=none
+        run: flutter build web
 
-      - name: Copy build files to gh-pages branch
-        run: |
-          git checkout gh-pages
-          git checkout main build/
-          git add -A
-          git commit -m "Deploy: $(date '+%Y-%m-%d %H:%M:%S')"
-          git push origin gh-pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          deploy_key: ${{ secrets.DEPLOY_KEY }}
+          publish_dir: ./build/web
+          publish_branch: gh-pages
