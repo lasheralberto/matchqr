@@ -594,7 +594,7 @@ void showInfoMatchesPopUp(
                                                           style: ElevatedButton
                                                               .styleFrom(
                                                             backgroundColor: Colors
-                                                                .white, // Cambia el color de fondo al color blanco
+                                                                .white30, // Cambia el color de fondo al color blanco
                                                             foregroundColor: Colors
                                                                 .blue, // Cambia el color del texto al azul
                                                             elevation:
